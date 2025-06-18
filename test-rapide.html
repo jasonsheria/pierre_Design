@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Rapide - Fonctions Globales</title>
+    <style>
+        body {
+            font-family: 'Open Sans', Arial, sans-serif;
+            margin: 2rem;
+            line-height: 1.6;
+        }
+        .test-result {
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+            background-color: #f8f9fa;
+        }
+        .success { border-left-color: #28a745; background-color: #d4edda; }
+        .error { border-left-color: #dc3545; background-color: #f8d7da; }
+        .warning { border-left-color: #ffc107; background-color: #fff3cd; }
+        code {
+            background-color: #e9ecef;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Rapide - Fonctions Globales</h1>
+    <div id="results"></div>
+    
+    <button onclick="runTests()" style="margin-top: 2rem; padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        🔄 Relancer les Tests
+    </button>
+
+    <!-- Scripts -->
+    <script src="js/globalData.js"></script>
+    <script>
+        function runTests() {
+            console.clear();
+            console.log('🚀 Test rapide des fonctions globales');
+            
+            const results = document.getElementById('results');
+            let html = '';
+            
+            // Test 1: Vérification de window.globalData
+            try {
+                if (window.globalData) {
+                    html += `<div class="test-result success">✅ <strong>window.globalData</strong> existe</div>`;
+                    console.log('✅ window.globalData existe');
+                } else {
+                    html += `<div class="test-result error">❌ <strong>window.globalData</strong> n'existe pas</div>`;
+                    console.log('❌ window.globalData n\'existe pas');
+                }
+            } catch (error) {
+                html += `<div class="test-result error">❌ Erreur lors de la vérification de window.globalData: ${error.message}</div>`;
+                console.error('❌ Erreur window.globalData:', error);
+            }
+            
+            // Test 2: Vérification des fonctions
+            const functionsToTest = [
+                'getGlobalData', 'getTheme', 'getThemeColor', 'getThemeSpacing', 
+                'getThemeFont', 'getCurrentLanguage', 'setCurrentLanguage', 'getLocalizedData'
+            ];
+            
+            functionsToTest.forEach(funcName => {
+                try {
+                    if (typeof window[funcName] === 'function') {
+                        html += `<div class="test-result success">✅ <strong>${funcName}</strong> disponible</div>`;
+                        console.log(`✅ ${funcName} disponible`);
+                    } else {
+                        html += `<div class="test-result error">❌ <strong>${funcName}</strong> non disponible (type: ${typeof window[funcName]})</div>`;
+                        console.log(`❌ ${funcName} non disponible`);
+                    }
+                } catch (error) {
+                    html += `<div class="test-result error">❌ Erreur lors du test de ${funcName}: ${error.message}</div>`;
+                    console.error(`❌ Erreur ${funcName}:`, error);
+                }
+            });
+            
+            // Test 3: Test fonctionnel
+            try {
+                const theme = window.getTheme();
+                if (theme && theme.colors) {
+                    html += `<div class="test-result success">✅ <strong>getTheme()</strong> retourne des données valides</div>`;
+                    console.log('✅ getTheme() fonctionne:', theme);
+                } else {
+                    html += `<div class="test-result warning">⚠️ <strong>getTheme()</strong> ne retourne pas de données valides</div>`;
+                    console.log('⚠️ getTheme() problème:', theme);
+                }
+            } catch (error) {
+                html += `<div class="test-result error">❌ Erreur lors de l'appel getTheme(): ${error.message}</div>`;
+                console.error('❌ Erreur getTheme():', error);
+            }
+            
+            // Test 4: Test couleur
+            try {
+                const primaryColor = window.getThemeColor('primary');
+                if (primaryColor) {
+                    html += `<div class="test-result success">✅ <strong>getThemeColor('primary')</strong> retourne: <code>${primaryColor}</code></div>`;
+                    console.log('✅ getThemeColor("primary"):', primaryColor);
+                } else {
+                    html += `<div class="test-result warning">⚠️ <strong>getThemeColor('primary')</strong> ne retourne pas de couleur</div>`;
+                    console.log('⚠️ getThemeColor("primary") problème');
+                }
+            } catch (error) {
+                html += `<div class="test-result error">❌ Erreur lors de l'appel getThemeColor('primary'): ${error.message}</div>`;
+                console.error('❌ Erreur getThemeColor():', error);
+            }
+            
+            // Test 5: Test langue
+            try {
+                const currentLang = window.getCurrentLanguage();
+                if (currentLang) {
+                    html += `<div class="test-result success">✅ <strong>getCurrentLanguage()</strong> retourne: <code>${currentLang}</code></div>`;
+                    console.log('✅ getCurrentLanguage():', currentLang);
+                } else {
+                    html += `<div class="test-result warning">⚠️ <strong>getCurrentLanguage()</strong> ne retourne pas de langue</div>`;
+                    console.log('⚠️ getCurrentLanguage() problème');
+                }
+            } catch (error) {
+                html += `<div class="test-result error">❌ Erreur lors de l'appel getCurrentLanguage(): ${error.message}</div>`;
+                console.error('❌ Erreur getCurrentLanguage():', error);
+            }
+            
+            results.innerHTML = html;
+            console.log('🏁 Tests terminés');
+        }
+        
+        // Exécuter les tests automatiquement au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📄 DOM chargé');
+            setTimeout(runTests, 500);
+        });
+        
+        // Si le DOM est déjà chargé
+        if (document.readyState !== 'loading') {
+            console.log('📄 DOM déjà chargé');
+            setTimeout(runTests, 500);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Navigation avec Données Globales</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .test-results {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            border-left: 4px solid #007bff;
+        }
+        .success {
+            color: #28a745;
+        }
+        .error {
+            color: #dc3545;
+        }
+        .warning {
+            color: #ffc107;
+        }
+        .info {
+            color: #17a2b8;
+        }
+        .preview-container {
+            border: 2px solid #dee2e6;
+            border-radius: 5px;
+            padding: 20px;
+            margin-top: 15px;
+            background: white;
+        }
+        .nav-preview {
+            background: #343a40;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Test de Navigation avec Données Globales</h1>
+        <p>Cette page teste l'intégration des données globales dans la navigation.</p>
+        
+        <div>
+            <h3>Tests de Base</h3>
+            <button class="test-button" onclick="testGlobalData()">📊 Test Données Globales</button>
+            <button class="test-button" onclick="testNavigationGeneration()">🧭 Test Génération Navigation</button>
+            <button class="test-button" onclick="previewNavigation()">👁️ Aperçu Navigation</button>
+            <button class="test-button" onclick="diagnoseSystem()">🔍 Diagnostic Système</button>
+        </div>
+        
+        <div class="test-results" id="test-results">
+            <strong>Résultats des tests :</strong>
+            <div id="results-content">Cliquez sur un bouton pour commencer les tests...</div>
+        </div>
+        
+        <div class="preview-container" id="preview-container" style="display: none;">
+            <h3>📋 Aperçu de la Navigation</h3>
+            <div id="navigation-preview"></div>
+        </div>
+    </div>
+
+    <!-- Scripts nécessaires -->
+    <script src="js/globalData.js"></script>
+    <script src="js/components.js"></script>
+    
+    <script>
+        const resultsContent = document.getElementById('results-content');
+        const previewContainer = document.getElementById('preview-container');
+        const navigationPreview = document.getElementById('navigation-preview');
+        
+        function addToResults(message, type = 'info') {
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
+            resultsContent.innerHTML += `<div class="${className}">✓ ${message}</div>`;
+        }
+        
+        function clearResults() {
+            resultsContent.innerHTML = '';
+        }
+        
+        function testGlobalData() {
+            clearResults();
+            addToResults('🔍 Test des données globales...', 'info');
+            
+            try {
+                // Test de la fonction getGlobalData
+                if (typeof window.getGlobalData === 'function') {
+                    addToResults('Fonction getGlobalData disponible', 'success');
+                    
+                    const globalData = window.getGlobalData();
+                    if (globalData) {
+                        addToResults('Données globales récupérées avec succès', 'success');
+                        
+                        // Test author
+                        if (globalData.author) {
+                            addToResults(`Données auteur trouvées - Email: ${globalData.author.email}`, 'success');
+                            addToResults(`Téléphone: ${globalData.author.telephone}`, 'success');
+                        } else {
+                            addToResults('Données auteur manquantes', 'error');
+                        }
+                        
+                        // Test site
+                        if (globalData.site) {
+                            addToResults(`Données site trouvées - Langue: ${globalData.site.siteLanguage}`, 'success');
+                        } else {
+                            addToResults('Données site manquantes', 'error');
+                        }
+                        
+                        // Test portfolio
+                        if (globalData.portfolio && globalData.portfolio.length > 0) {
+                            addToResults(`Portfolio trouvé avec ${globalData.portfolio.length} projets`, 'success');
+                        } else {
+                            addToResults('Portfolio manquant ou vide', 'warning');
+                        }
+                        
+                    } else {
+                        addToResults('Impossible de récupérer les données globales', 'error');
+                    }
+                } else {
+                    addToResults('Fonction getGlobalData non disponible', 'error');
+                }
+                
+            } catch (error) {
+                addToResults(`Erreur lors du test: ${error.message}`, 'error');
+            }
+        }
+        
+        function testNavigationGeneration() {
+            clearResults();
+            addToResults('🧭 Test de génération de navigation...', 'info');
+            
+            try {
+                // Test de la fonction injectNavigation
+                if (typeof window.injectNavigation === 'function') {
+                    addToResults('Fonction injectNavigation disponible', 'success');
+                    
+                    // Créer un conteneur de test
+                    const testContainer = document.createElement('div');
+                    testContainer.id = 'test-navigation-container';
+                    document.body.appendChild(testContainer);
+                    
+                    // Injecter la navigation
+                    window.injectNavigation();
+                    
+                    // Vérifier si la navigation a été injectée
+                    const navElement = document.querySelector('nav.navbar');
+                    if (navElement) {
+                        addToResults('Navigation injectée avec succès', 'success');
+                        
+                        // Vérifier les éléments spécifiques
+                        const emailElement = navElement.querySelector('.icon-paper-plane');
+                        const phoneElement = navElement.querySelector('.icon-phone2');
+                        
+                        if (emailElement) {
+                            addToResults('Icône email trouvée dans la navigation', 'success');
+                        } else {
+                            addToResults('Icône email manquante', 'warning');
+                        }
+                        
+                        if (phoneElement) {
+                            addToResults('Icône téléphone trouvée dans la navigation', 'success');
+                        } else {
+                            addToResults('Icône téléphone manquante', 'warning');
+                        }
+                        
+                    } else {
+                        addToResults('Navigation non injectée', 'error');
+                    }
+                    
+                    // Nettoyer
+                    testContainer.remove();
+                    
+                } else {
+                    addToResults('Fonction injectNavigation non disponible', 'error');
+                }
+                
+            } catch (error) {
+                addToResults(`Erreur lors du test: ${error.message}`, 'error');
+            }
+        }
+        
+        function previewNavigation() {
+            clearResults();
+            addToResults('👁️ Génération de l\'aperçu...', 'info');
+            
+            try {
+                if (window.getGlobalData && typeof window.getGlobalData === 'function') {
+                    const globalData = window.getGlobalData();
+                    
+                    if (globalData && globalData.author) {
+                        const previewHTML = `
+                            <div class="nav-preview">
+                                <h4>🧭 Navigation Header</h4>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                                    <div>
+                                        <strong>📧 Email:</strong> ${globalData.author.email || 'Non défini'}
+                                    </div>
+                                    <div>
+                                        <strong>📞 Téléphone:</strong> +243 ${globalData.author.telephone || 'Non défini'}
+                                    </div>
+                                </div>
+                                <div style="margin-top: 10px;">
+                                    <strong>🌍 Langue:</strong> ${globalData.site?.siteLanguage || 'fr'}
+                                </div>
+                            </div>
+                        `;
+                        
+                        navigationPreview.innerHTML = previewHTML;
+                        previewContainer.style.display = 'block';
+                        
+                        addToResults('Aperçu généré avec succès', 'success');
+                    } else {
+                        addToResults('Données insuffisantes pour l\'aperçu', 'error');
+                    }
+                } else {
+                    addToResults('Fonction getGlobalData non disponible', 'error');
+                }
+                
+            } catch (error) {
+                addToResults(`Erreur lors de la génération: ${error.message}`, 'error');
+            }
+        }
+        
+        function diagnoseSystem() {
+            clearResults();
+            addToResults('🔍 Diagnostic du système...', 'info');
+            
+            try {
+                if (typeof window.diagnoseLangSystem === 'function') {
+                    window.diagnoseLangSystem();
+                    addToResults('Diagnostic exécuté - voir console pour détails', 'success');
+                } else {
+                    addToResults('Fonction de diagnostic non disponible', 'warning');
+                }
+                
+                // Test manuel
+                const tests = [
+                    { name: 'window.getGlobalData', func: window.getGlobalData },
+                    { name: 'window.getTranslations', func: window.getTranslations },
+                    { name: 'window.setSiteLanguage', func: window.setSiteLanguage },
+                    { name: 'window.injectNavigation', func: window.injectNavigation },
+                    { name: 'window.injectFooter', func: window.injectFooter }
+                ];
+                
+                tests.forEach(test => {
+                    const status = typeof test.func === 'function' ? 'success' : 'error';
+                    const message = typeof test.func === 'function' ? 'Disponible' : 'Non disponible';
+                    addToResults(`${test.name}: ${message}`, status);
+                });
+                
+            } catch (error) {
+                addToResults(`Erreur lors du diagnostic: ${error.message}`, 'error');
+            }
+        }
+        
+        // Auto-test au chargement
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                addToResults('Page de test chargée et prête', 'success');
+                console.log('=== PAGE DE TEST DE NAVIGATION PRÊTE ===');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

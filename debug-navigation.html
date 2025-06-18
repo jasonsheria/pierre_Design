@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Navigation et Footer</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .debug-info {
+            margin: 1rem 0;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f8f9fa;
+        }
+        .success { border-color: #28a745; background: #d4edda; }
+        .error { border-color: #dc3545; background: #f8d7da; }
+        .warning { border-color: #ffc107; background: #fff3cd; }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>🔍 Debug Navigation et Footer</h1>
+        
+        <div id="debug-results"></div>
+        
+        <button onclick="debugComponents()" class="btn btn-primary">🔄 Tester Composants</button>
+        <button onclick="forceLoadComponents()" class="btn btn-success">⚡ Forcer Chargement</button>
+        
+        <!-- Conteneurs de test -->
+        <div id="navigation" style="border: 2px dashed #007bff; margin: 2rem 0; min-height: 50px;">
+            <p style="text-align: center; color: #007bff; margin: 1rem;">Zone Navigation (sera remplacée)</p>
+        </div>
+        
+        <div id="ftco-footer" style="border: 2px dashed #28a745; margin: 2rem 0; min-height: 50px;">
+            <p style="text-align: center; color: #28a745; margin: 1rem;">Zone Footer (sera remplacée)</p>
+        </div>
+    </div>
+
+    <!-- Scripts dans le bon ordre -->
+    <script src="js/globalData.js"></script>
+    <script src="js/translationDictionary.js"></script>
+    <script src="js/smartTranslator.js"></script>
+    <script src="js/components.js"></script>
+    
+    <script>
+        function debugComponents() {
+            const results = document.getElementById('debug-results');
+            let html = '<h2>📊 Diagnostic des Composants</h2>';
+            
+            // Test 1: Vérification des éléments DOM
+            const navElement = document.getElementById('navigation');
+            const footerElement = document.getElementById('ftco-footer');
+            
+            html += `<div class="debug-info ${navElement ? 'success' : 'error'}">
+                ${navElement ? '✅' : '❌'} <strong>Élément #navigation</strong>: ${navElement ? 'Trouvé' : 'Non trouvé'}
+            </div>`;
+            
+            html += `<div class="debug-info ${footerElement ? 'success' : 'error'}">
+                ${footerElement ? '✅' : '❌'} <strong>Élément #ftco-footer</strong>: ${footerElement ? 'Trouvé' : 'Non trouvé'}
+            </div>`;
+            
+            // Test 2: Vérification des fonctions
+            const loadNavAvailable = typeof window.loadNavigation === 'function';
+            const loadFooterAvailable = typeof window.loadFooter === 'function';
+            
+            html += `<div class="debug-info ${loadNavAvailable ? 'success' : 'error'}">
+                ${loadNavAvailable ? '✅' : '❌'} <strong>window.loadNavigation</strong>: ${typeof window.loadNavigation}
+            </div>`;
+            
+            html += `<div class="debug-info ${loadFooterAvailable ? 'success' : 'error'}">
+                ${loadFooterAvailable ? '✅' : '❌'} <strong>window.loadFooter</strong>: ${typeof window.loadFooter}
+            </div>`;
+            
+            // Test 3: Vérification de globalData
+            const globalDataOk = window.globalData && window.globalData.navigation;
+            html += `<div class="debug-info ${globalDataOk ? 'success' : 'error'}">
+                ${globalDataOk ? '✅' : '❌'} <strong>globalData.navigation</strong>: ${globalDataOk ? 'Disponible' : 'Non disponible'}
+            </div>`;
+            
+            // Test 4: Vérification des traductions
+            const translationsOk = typeof window.getTranslations === 'function';
+            html += `<div class="debug-info ${translationsOk ? 'success' : 'error'}">
+                ${translationsOk ? '✅' : '❌'} <strong>window.getTranslations</strong>: ${typeof window.getTranslations}
+            </div>`;
+            
+            if (translationsOk) {
+                try {
+                    const navTranslations = window.getTranslations('navigation');
+                    html += `<div class="debug-info ${navTranslations ? 'success' : 'warning'}">
+                        ${navTranslations ? '✅' : '⚠️'} <strong>Navigation traduite</strong>: ${navTranslations ? navTranslations.length + ' éléments' : 'Non disponible'}
+                    </div>`;
+                } catch (error) {
+                    html += `<div class="debug-info error">
+                        ❌ <strong>Erreur traductions</strong>: ${error.message}
+                    </div>`;
+                }
+            }
+            
+            // Test 5: Contenu actuel des conteneurs
+            if (navElement) {
+                const navContent = navElement.innerHTML.trim();
+                html += `<div class="debug-info ${navContent.includes('navbar') ? 'success' : 'warning'}">
+                    📋 <strong>Contenu navigation</strong>: ${navContent ? 'Présent (' + navContent.length + ' chars)' : 'Vide'}
+                </div>`;
+            }
+            
+            if (footerElement) {
+                const footerContent = footerElement.innerHTML.trim();
+                html += `<div class="debug-info ${footerContent.includes('ftco-footer') ? 'success' : 'warning'}">
+                    📋 <strong>Contenu footer</strong>: ${footerContent ? 'Présent (' + footerContent.length + ' chars)' : 'Vide'}
+                </div>`;
+            }
+            
+            results.innerHTML = html;
+            console.log('🔍 Diagnostic terminé');
+        }
+        
+        function forceLoadComponents() {
+            console.log('⚡ Forçage du chargement des composants...');
+            
+            try {
+                if (typeof window.loadNavigation === 'function') {
+                    window.loadNavigation();
+                    console.log('✅ Navigation forcée');
+                } else {
+                    console.error('❌ loadNavigation non disponible');
+                }
+                
+                if (typeof window.loadFooter === 'function') {
+                    window.loadFooter();
+                    console.log('✅ Footer forcé');
+                } else {
+                    console.error('❌ loadFooter non disponible');
+                }
+                
+                // Re-diagnostic après chargement forcé
+                setTimeout(debugComponents, 500);
+                
+            } catch (error) {
+                console.error('❌ Erreur lors du forçage:', error);
+            }
+        }
+        
+        // Auto-diagnostic au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(debugComponents, 1000);
+        });
+        
+        // Écouter l'événement globalDataReady
+        window.addEventListener('globalDataReady', function(e) {
+            console.log('📢 Événement globalDataReady reçu dans debug:', e.detail);
+            setTimeout(debugComponents, 500);
+        });
+    </script>
+</body>
+</html>

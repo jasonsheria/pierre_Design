@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test des Corrections JavaScript</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .warning { color: #ffc107; }
+        .info { color: #17a2b8; }
+        #results {
+            white-space: pre-wrap;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-success { background: #d4edda; color: #155724; }
+        .status-error { background: #f8d7da; color: #721c24; }
+        .status-warning { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test des Corrections JavaScript</h1>
+    
+    <div class="test-section">
+        <h2>🎯 Tests de Validation</h2>
+        <div id="results">Chargement des tests...</div>
+    </div>
+
+    <div class="test-section">
+        <h2>🧭 Navigation</h2>
+        <div id="navigation-container"><!-- Navigation will be loaded here --></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🦶 Footer</h2>
+        <div id="footer-container"><!-- Footer will be loaded here --></div>
+    </div>
+
+    <!-- Scripts dans le bon ordre -->
+    <script src="js/globalData.js"></script>
+    <script src="js/translationDictionary.js"></script>
+    <script src="js/smartTranslator.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/diagnostic.js"></script>
+
+    <script>
+        // Attendre que globalData soit prêt
+        document.addEventListener('globalDataReady', function() {
+            console.log('🟢 Événement globalDataReady reçu');
+            runTests();
+            loadComponents();
+        });
+
+        // Fallback si l'événement ne se déclenche pas
+        setTimeout(() => {
+            if (typeof window.getGlobalData !== 'function') {
+                console.log('🔄 Démarrage en mode fallback');
+                runTests();
+                loadComponents();
+            }
+        }, 1000);
+
+        function runTests() {
+            const results = [];
+            
+            // Test 1: Variables globales
+            results.push('\n=== 🔍 TESTS DES CORRECTIONS ===\n');
+            
+            // Test des fonctions globales
+            const globalFunctions = [
+                'getGlobalData', 'getTheme', 'getThemeColor', 'getCurrentLanguage', 
+                'setCurrentLanguage', 'getTranslations', 'setSiteLanguage', 'getPortfolio'
+            ];
+            
+            results.push('📋 Test des fonctions globales:');
+            globalFunctions.forEach(fn => {
+                const status = typeof window[fn] === 'function' ? '✅' : '❌';
+                results.push(`  ${status} ${fn}: ${typeof window[fn]}`);
+            });
+            
+            // Test de globalData
+            results.push('\n📊 Test de globalData:');
+            if (typeof window.getGlobalData === 'function') {
+                try {
+                    const data = window.getGlobalData();
+                    results.push(`  ✅ getGlobalData() fonctionne`);
+                    results.push(`  📋 Sections: ${Object.keys(data || {}).join(', ')}`);
+                    
+                    // Test du portfolio
+                    if (data?.portfolio?.fr) {
+                        results.push(`  📁 Portfolio FR: ${data.portfolio.fr.length} projets`);
+                    } else {
+                        results.push(`  ⚠️ Portfolio FR non trouvé`);
+                    }
+                } catch(e) {
+                    results.push(`  ❌ Erreur: ${e.message}`);
+                }
+            } else {
+                results.push(`  ❌ getGlobalData non disponible`);
+            }
+            
+            // Test des traductions
+            results.push('\n🌐 Test des traductions:');
+            if (typeof window.getTranslations === 'function') {
+                try {
+                    const translations = window.getTranslations();
+                    if (translations) {
+                        results.push(`  ✅ getTranslations() fonctionne`);
+                        results.push(`  🏷️ Clés: ${Object.keys(translations).join(', ')}`);
+                    } else {
+                        results.push(`  ⚠️ getTranslations() retourne null`);
+                    }
+                } catch(e) {
+                    results.push(`  ❌ Erreur: ${e.message}`);
+                }
+            } else {
+                results.push(`  ❌ getTranslations non disponible`);
+            }
+            
+            // Test du thème
+            results.push('\n🎨 Test du thème:');
+            if (typeof window.getTheme === 'function') {
+                try {
+                    const theme = window.getTheme();
+                    if (theme) {
+                        results.push(`  ✅ getTheme() fonctionne`);
+                        results.push(`  🎨 Sections: ${Object.keys(theme).join(', ')}`);
+                    } else {
+                        results.push(`  ⚠️ getTheme() retourne null`);
+                    }
+                } catch(e) {
+                    results.push(`  ❌ Erreur: ${e.message}`);
+                }
+            } else {
+                results.push(`  ❌ getTheme non disponible`);
+            }
+            
+            results.push('\n=== 🏁 FIN DES TESTS ===\n');
+            
+            document.getElementById('results').textContent = results.join('\n');
+        }
+
+        function loadComponents() {
+            // Charger la navigation
+            if (typeof window.loadNavigation === 'function') {
+                try {
+                    window.loadNavigation('navigation-container');
+                    console.log('✅ Navigation chargée avec succès');
+                } catch(e) {
+                    console.error('❌ Erreur chargement navigation:', e);
+                    document.getElementById('navigation-container').innerHTML = 
+                        `<div class="error">❌ Erreur: ${e.message}</div>`;
+                }
+            } else {
+                document.getElementById('navigation-container').innerHTML = 
+                    '<div class="warning">⚠️ Fonction loadNavigation non disponible</div>';
+            }
+            
+            // Charger le footer
+            if (typeof window.loadFooter === 'function') {
+                try {
+                    window.loadFooter('footer-container');
+                    console.log('✅ Footer chargé avec succès');
+                } catch(e) {
+                    console.error('❌ Erreur chargement footer:', e);
+                    document.getElementById('footer-container').innerHTML = 
+                        `<div class="error">❌ Erreur: ${e.message}</div>`;
+                }
+            } else {
+                document.getElementById('footer-container').innerHTML = 
+                    '<div class="warning">⚠️ Fonction loadFooter non disponible</div>';
+            }
+        }
+    </script>
+</body>
+</html>

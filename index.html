@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Bee - Accueil - Template Bootstrap 4 Gratuit par Colorlib</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Nunito+Sans:200,300,400,600,700,800,900" rel="stylesheet">
+
+	<link rel="stylesheet" href="css/open-iconic-bootstrap.min.css">
+	<link rel="stylesheet" href="css/animate.css">
+
+	<link rel="stylesheet" href="css/owl.carousel.min.css">
+	<link rel="stylesheet" href="css/owl.theme.default.min.css">
+	<link rel="stylesheet" href="css/magnific-popup.css">
+
+	<link rel="stylesheet" href="css/aos.css">
+
+	<link rel="stylesheet" href="css/ionicons.min.css">
+
+	<link rel="stylesheet" href="css/bootstrap-datepicker.css">
+	<link rel="stylesheet" href="css/jquery.timepicker.css">
+
+
+	<link rel="stylesheet" href="css/flaticon.css">
+	<link rel="stylesheet" href="css/icomoon.css">
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/stylesperso.css">
+	<link rel="stylesheet" href="css/theme-enhanced.css">
+	<link rel="stylesheet" href="css/chatbot.css">
+	<link rel="stylesheet" href="css/language-selector.css">
+</head>
+
+<body>
+	<!-- Global Data script import (à charger en premier) -->
+	<script src="js/globalData.js"></script>
+	<!-- Translation Dictionary script import -->
+	<script src="js/translationDictionary.js"></script>
+	<!-- Smart Translator script import -->
+	<script src="js/smartTranslator.js"></script>
+	<!-- Components script import -->
+	<script src="js/components.js"></script>
+	<!-- Theme Controller script import -->
+	<script src="js/theme-controller.js"></script>
+	<!-- Diagnostic script import (pour debug) -->
+	<script src="js/diagnostic.js"></script>
+	<script>
+		// Récupération et affichage des données globales à l'initialisation
+		document.addEventListener('DOMContentLoaded', function() {
+			console.log('=== INITIALISATION PAGE INDEX ===');
+			console.log('1. Vérification de la fonction getGlobalData:', typeof window.getGlobalData);
+			
+			if (window.getGlobalData) {
+				const globalData = window.getGlobalData();
+				console.log('2. Données globales récupérées:', globalData);
+				console.log('3. Portfolio:', globalData?.portfolio);
+				console.log('4. Nombre de projets portfolio:', globalData?.portfolio?.length || 0);
+				console.log('5. Author:', globalData?.author);
+				console.log('6. Site:', globalData?.site);
+				
+				// Test d'affichage du portfolio dans la section Featured Projects
+				console.log('7. Test d\'affichage du portfolio...');
+				const featuredRow = document.getElementById('portfolio-featured-projects');
+				const sliders =document.querySelectorAll('.home-slider .slider-item');
+				// ajouter les image de slider venue de globalData
+				if (sliders.length > 0 && globalData?.portfolio?.length) {
+					console.log('7.1 Injection des images de slider...');
+					sliders.forEach((slider, idx) => {
+						if (globalData.portfolio[idx]) {
+							slider.style.backgroundImage = `url(${globalData.portfolio[idx].image})`;
+							console.log(`7.2 Image de slider #${idx+1} injectée:`, globalData.portfolio[idx].image);
+						} else {
+							console.warn(`7.3 Pas d'image pour le slider #${idx+1}`);
+						}
+					});
+				} else {
+					console.warn('7.4 Aucun slider trouvé ou pas d\'images à injecter');
+				}
+				if (featuredRow && globalData?.portfolio?.length) {
+					console.log('8. Conteneur trouvé, injection des projets...');
+					featuredRow.innerHTML = '';
+					// Limiter l'affichage à 8 projets maximum
+					const portfolioLimited = globalData.portfolio.slice(0, 8);
+					console.log(`9. Affichage limité à ${portfolioLimited.length} projets sur ${globalData.portfolio.length} disponibles`);
+					
+					portfolioLimited.forEach((proj, idx) => {
+						console.log(`10. Ajout du projet #${idx+1}:`, proj.title);
+						const col = document.createElement('div');
+						col.className = 'col-md-6 col-lg-3 ftco-animate';
+						col.innerHTML = `
+							<div class="project">
+								<img src="${proj.image}" class="img-fluid" alt="${proj.title}">
+								<div class="text">
+									<span>${proj.type}</span>
+									<h3><a href="project.html">${proj.title}</a></h3>
+								</div>
+								<a href="${proj.image}" class="icon image-popup d-flex justify-content-center align-items-center">
+									<span class="icon-expand"></span>
+								</a>
+							</div>
+						`;
+						featuredRow.appendChild(col);
+						
+						// Déclencher l'animation après un court délai
+						setTimeout(() => {
+							col.classList.add('ftco-animated');
+							col.style.opacity = '1';
+							col.style.visibility = 'visible';
+						}, 100 * idx);
+					});
+					console.log('11. ✅ Portfolio affiché avec succès!');
+				} else {
+					console.log('8. ❌ Conteneur introuvable ou portfolio vide');
+				}
+			} else {
+				console.error('La fonction getGlobalData n\'est pas disponible!');
+			}
+			console.log('=== FIN INITIALISATION ===');
+		});
+	</script>
+	<!-- Chatbot script import -->
+	<script src="js/chatbot.js"></script>
+	<!-- END Global Data script import -->
+	<div id="navigation">
+		<!-- Navigation sera injectée ici par components.js -->
+	</div>
+	
+	<!-- END nav -->
+
+	<section class="home-slider owl-carousel">
+		<div class="slider-item" style="background-image:url(images/plan.2.jpg);" data-stellar-background-ratio="0.5">
+			<div class="overlay"></div>
+			<div class="container">
+				<div class="row no-gutters slider-text align-items-center justify-content-end"
+					data-scrollax-parent="true">
+					<div class="col-md-6 text ftco-animate pl-md-5">
+						<h1 class="mb-4" data-translate-auto>Construction Base <span>Construire l'Avenir</span></h1>
+						<h3 class="subheading" data-translate-auto>Une petite rivière nommée Duden coule près de leur lieu et leur fournit la regelialia nécessaire</h3>
+						<p><a href="#" class="btn btn-secondary px-4 py-3 mt-3" data-translate-auto>Demander un Devis</a></p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="slider-item" style="background:url(images/echangeur.jpeg) bottom center no-repeat; background-size:cover;"
+			data-stellar-background-ratio="0.5">
+			<div class="overlay"></div>
+			<div class="container">
+				<div class="row no-gutters slider-text align-items-center justify-content-end"
+					data-scrollax-parent="true">
+					<div class="col-md-6 text ftco-animate pl-md-5">
+						<h1 class="mb-4">Nous Transformons Votre <span>Vision en Réalité</span></h1>
+						<h3 class="subheading">Une petite rivière nommée Duden coule près de leur lieu et leur fournit la regelialia nécessaire</h3>
+						<p><a href="#" class="btn btn-secondary px-4 py-3 mt-3">Demander un Devis</a></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+
+	<section class="ftco-section ftco-no-pt ftco-margin-top">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-4">
+					<div class="request-quote shadow">
+						<div class="bg-primary py-4">
+							<span class="subheading">Rejoignez Notre Entreprise</span>
+							<h3>Demander un Devis</h3>
+						</div>
+						<form action="#" class="request-form ftco-animate">
+							<div class="form-group">
+								<input type="text" class="form-control" placeholder="Prénom">
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" placeholder="Nom de Famille">
+							</div>
+							<div class="form-group">
+								<div class="form-field">
+									<div class="select-wrap">
+										<div class="icon"><span class="ion-ios-arrow-down"></span></div>
+										<select name="" id="" class="form-control">
+											<option value="">Sélectionnez Vos Services</option>
+											<option value="">Construction</option>
+											<option value="">Rénovation</option>
+											<option value="">Design Intérieur</option>
+											<option value="">Design Extérieur</option>
+											<option value="">Peinture</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" placeholder="Téléphone">
+							</div>
+							<div class="form-group">
+								<textarea name="" id="" cols="30" rows="2" class="form-control"
+									placeholder="Message"></textarea>
+							</div>
+							<div class="form-group">
+								<input type="submit" value="Prendre Rendez-vous" class="btn btn-primary py-3 px-4">
+							</div>
+						</form>
+					</div>
+				</div>
+				<div class="col-md-8 wrap-about py-5 ftco-animate">
+					<div class="heading-section mb-5">
+						<h2 class="mb-4">Nous Sommes une Entreprise de Construction Hautement Recommandée</h2>
+					</div>
+					<div class="">
+						<p class="mb-5">En chemin, elle rencontra une copie. La copie avertit le Petit Texte Aveugle que d'où il venait, il aurait été réécrit mille fois et tout ce qui restait de son origine serait le mot. Loin, très loin, derrière les montagnes de mots, loin des pays Vokalia et Consonantia, vivent les textes aveugles. Séparés, ils vivent à Bookmarksgrove.</p>
+						<p><a href="#" class="btn btn-secondary px-5 py-3">En Savoir Plus</a></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="ftco-services ftco-no-pt">
+		<div class="container">
+			<div class="row justify-content-center mb-5 pb-2">
+				<div class="col-md-8 text-center heading-section ftco-animate">
+					<span class="subheading">Services</span>
+					<h2 class="mb-4">Nos Services</h2>
+					<p>Séparés, ils vivent. Une petite rivière nommée Duden coule près de leur lieu et leur fournit la regelialia nécessaire. C'est un pays paradisiaque</p>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3 d-flex services align-self-stretch p-4 ftco-animate">
+					<div class="media block-6 d-block text-center">
+						<div class="icon d-flex justify-content-center align-items-center">
+							<span class="flaticon-hook"></span>
+						</div>
+						<div class="media-body p-2 mt-3">
+							<h3 class="heading">Construction</h3>
+							<p>Même le tout-puissant Pointing n'a aucun contrôle sur les textes aveugles, c'est un texte presque non orthographique.</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3 d-flex services align-self-stretch p-4 ftco-animate">
+					<div class="media block-6 d-block text-center">
+						<div class="icon d-flex justify-content-center align-items-center">
+							<span class="flaticon-skyline"></span>
+						</div>
+						<div class="media-body p-2 mt-3">
+							<h3 class="heading">Rénovation de Maison</h3>
+							<p>Même le tout-puissant Pointing n'a aucun contrôle sur les textes aveugles, c'est un texte presque non orthographique.</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3 d-flex services align-self-stretch p-4 ftco-animate">
+					<div class="media block-6 d-block text-center">
+						<div class="icon d-flex justify-content-center align-items-center">
+							<span class="flaticon-stairs"></span>
+						</div>
+						<div class="media-body p-2 mt-3">
+							<h3 class="heading">Peinture</h3>
+							<p>Même le tout-puissant Pointing n'a aucun contrôle sur les textes aveugles, c'est un texte presque non orthographique.</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3 d-flex services align-self-stretch p-4 ftco-animate">
+					<div class="media block-6 d-block text-center">
+						<div class="icon d-flex justify-content-center align-items-center">
+							<span class="flaticon-home"></span>
+						</div>
+						<div class="media-body p-2 mt-3">
+							<h3 class="heading">Design Architectural</h3>
+							<p>Même le tout-puissant Pointing n'a aucun contrôle sur les textes aveugles, c'est un texte presque non orthographique.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+
+	<section class="ftco-intro mb-5" style="background-image: url(images/Kinshasa\ \,\ Congo.jpeg);" data-stellar-background-ratio="0.5">
+		<div class="overlay"></div>
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-md-9 text-center">
+					<h2>Construisons Votre Rêve Ensemble</h2>
+					<p>Nous pouvons gérer la construction de vos rêves. Une petite rivière nommée Duden coule près de leur lieu</p>
+					<p class="mb-0"><a href="#" class="btn btn-primary px-4 py-3">En savoir plus sur nous</a></p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- <section class="ftco-section">
+		<div class="container">
+			<div class="row justify-content-center mb-5 pb-2">
+				<div class="col-md-8 text-center heading-section ftco-animate">
+					<span class="subheading">Team</span>
+					<h2 class="mb-4">Our Professional Team</h2>
+					<p>Separated they live in. A small river named Duden flows by their place and supplies it with
+						the necessary regelialia. It is a paradisematic country</p>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6 col-lg-3 ftco-animate">
+					<div class="staff">
+						<div class="img-wrap d-flex align-items-stretch">
+							<div class="img align-self-stretch"
+								style="background-image: url(images/team-1.jpg);"></div>
+						</div>
+						<div class="text pt-3 text-center">
+							<h3>Daren Wilson</h3>
+							<span class="position mb-2">Head Engineer</span>
+							<div class="faded">
+								<!-- <p>I am an ambitious workaholic, but apart from that, pretty simple person.</p> ->
+								<ul class="ftco-social text-center">
+									<li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a>
+									</li>
+									<li class="ftco-animate"><a href="#"><span
+												class="icon-facebook"></span></a></li>
+									<li class="ftco-animate"><a href="#"><span
+												class="icon-google-plus"></span></a></li>
+									<li class="ftco-animate"><a href="#"><span
+												class="icon-instagram"></span></a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6 col-lg-3 ftco-animate">
+					<div class="staff">
+						<div class="img-wrap d-flex align-items-stretch">
+							<div class="img align-self-stretch"
+								style="background-image: url(images/team-2.jpg);"></div>
+						</div>
+						<div class="text pt-3 text-center">
+							<h3>Warren Parker</h3>
+							<span class="position mb-2">Ass. Engineer</span>
+							<div class="faded">
+								<!-- <p>I am an ambitious workaholic, but apart from that, pretty simple person.</p> ->
+								<ul class="ftco-social text-center">
+									<li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a>
+									</li>
+									<li class="ftco-animate"><a href="#"><span
+												class="icon-facebook"></span></a></li>
+									<li class="ftco-animate"><a href="#"><span
+												class="icon-google-plus"></span></a></li>
+									<li class="ftco-animate"><a href="#"><span
+												class="icon-instagram"></span></a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6 col-lg-3 ftco-animate">
+					<div class="staff">
+						<div class="img-wrap d-flex align-items-stretch">
+							<div class="img align-self-stretch"
+								style="background-image: url(images/team-3.jpg);"></div>
+						</div>
+						<div class="text pt-3 text-center">
+							<h3>Eva Gustavo</h3>
+							<span class="position mb-2">Engineer</span>
+							<div class="faded">
+								<!-- <p>I am an ambitious workaholic, but apart from that, pretty simple person.</p> ->
+								<ul class="ftco-social text-center">
+									<li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a>
+									</li>
+									<li class="ftco-animate"><a href="#"><span
+												class="icon-facebook"></span></a></li>
+									<li class="ftco-animate"><a href="#"><span
+												class="icon-google-plus"></span></a></li>
+									<li class="ftco-animate"><a href="#"><span
+												class="icon-instagram"></span></a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6 col-lg-3 ftco-animate">
+					<div class="staff">
+						<div class="img-wrap d-flex align-items-stretch">
+							<div class="img align-self-stretch"
+								style="background-image: url(images/team-4.jpg);"></div>
+						</div>
+						<div class="text pt-3 text-center">
+							<h3>Mike Henderson</h3>
+							<span class="position mb-2">Architect</span>
+							<div class="faded">
+								<!-- <p>I am an ambitious workaholic, but apart from that, pretty simple person.</p> ->
+								<ul class="ftco-social text-center">
+									<li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a>
+									</li>
+									<li class="ftco-animate"><a href="#"><span
+												class="icon-facebook"></span></a></li>
+									<li class="ftco-animate"><a href="#"><span
+												class="icon-google-plus"></span></a></li>
+									<li class="ftco-animate"><a href="#"><span
+												class="icon-instagram"></span></a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section> -->
+
+	<section class="ftco-section ftco-no-pt ftco-no-pb">
+		<div class="container-fluid p-0">
+			<div class="row no-gutters justify-content-center mb-5 pb-2">
+				<div class="col-md-6 text-center heading-section ftco-animate">
+					<span class="subheading">Projets</span>
+					<h2 class="mb-4" data-translate="featured-projects">Projets en Vedette</h2>
+					<p>Découvrez notre sélection de projets réalisés avec passion et expertise. Chaque projet reflète notre engagement envers l'innovation et la qualité.</p>
+				</div>
+			</div>
+			<div class="row no-gutters" id="portfolio-featured-projects">
+				<!-- Les projets du portfolio seront injectés ici dynamiquement -->
+			</div>
+		</div>
+	</section>
+	<section class="ftco-counter img" id="section-counter" style="background-image: url(images/bg_3.jpg);"
+		data-stellar-background-ratio="0.5">
+		<div class="container">
+			<div class="row">
+				<div class="col-md col-lg d-flex justify-content-center counter-wrap ftco-animate">
+					<div class="block-18 d-flex justify-content-center">
+						<div class="text d-flex align-items-center">
+							<strong class="number" data-number="30">0</strong>
+						</div>
+						<div class="text-2">
+							<span data-translate="years-experience">Années d'<br>Expérience</span>
+						</div>
+					</div>
+				</div>
+				<div class="col-md col-lg d-flex justify-content-center counter-wrap ftco-animate">
+					<div class="block-18 d-flex justify-content-center">
+						<div class="text d-flex align-items-center">
+							<strong class="number" data-number="1500">0</strong>
+						</div>
+						<div class="text-2">
+							<span data-translate="successful-projects">Projets <br>Réussis</span>
+						</div>
+					</div>
+				</div>
+				<!-- <div class="col-md-6 col-lg-3 d-flex justify-content-center counter-wrap ftco-animate">
+					<div class="block-18 d-flex">
+						<div class="text d-flex align-items-center">
+							<strong class="number" data-number="100">0</strong>
+						</div>
+						<div class="text-2">
+							<span>Professional <br>Expert</span>
+						</div>
+					</div>
+				</div> -->
+				<div class="col-md col-lg d-flex justify-content-center counter-wrap ftco-animate">
+					<div class="block-18 d-flex justify-content-center">
+						<div class="text d-flex align-items-center">
+							<strong class="number" data-number="300">0</strong>
+						</div>
+						<div class="text-2">
+							<span data-translate="happy-customers">Clients <br>Satisfaits</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="ftco-section testimony-section">
+		<div class="container">
+			<div class="row ftco-animate">
+				<div class="col-md-6 col-lg-6 col-xl-4">
+					<div class="heading-section ftco-animate">
+						<span class="subheading">Services</span>
+						<h2 class="mb-4">Profitez de Nos Excellents Services</h2>
+					</div>
+					<div class="services-flow">
+						<div class="services-2 p-4 d-flex ftco-animate">
+							<div class="icon">
+								<span class="flaticon-engineer"></span>
+							</div>
+							<div class="text">
+								<h3>Expert &amp; Professionnel</h3>
+								<p>Séparés, ils vivent. Une petite rivière nommée Duden coule</p>
+							</div>
+						</div>
+						<div class="services-2 p-4 d-flex ftco-animate">
+							<div class="icon">
+								<span class="flaticon-engineer-1"></span>
+							</div>
+							<div class="text">
+								<h3>Travail de Haute Qualité</h3>
+								<p>Séparés, ils vivent. Une petite rivière nommée Duden coule</p>
+							</div>
+						</div>
+						<div class="services-2 p-4 d-flex ftco-animate">
+							<div class="icon">
+								<span class="flaticon-engineer-2"></span>
+							</div>
+							<div class="text">
+								<h3>Support d'Aide 24/7</h3>
+								<p>Séparés, ils vivent. Une petite rivière nommée Duden coule</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-xl-1 d-xl-block d-none"></div>
+				<div class="col-md-6 col-lg-6 col-xl-7">
+					<div class="heading-section ftco-animate mb-5">
+						<span class="subheading">Témoignages</span>
+						<h2 class="mb-4">Clients Satisfaits</h2>
+						<p>Séparés, ils vivent. Une petite rivière nommée Duden coule près de leur lieu et leur fournit la regelialia nécessaire. C'est un pays paradisiaque</p>
+					</div>
+					<div class="carousel-testimony owl-carousel">
+						<div class="item">
+							<div class="testimony-wrap">
+								<div class="text bg-light p-4">
+									<span class="quote d-flex align-items-center justify-content-center">
+										<i class="icon-quote-left"></i>
+									</span>
+									<p>Loin, très loin, derrière les montagnes de mots, loin des pays Vokalia et Consonantia, vivent les textes aveugles.</p>
+									<p class="name">Racky Henderson</p>
+									<span class="position">Agriculteur</span>
+								</div>
+								<div class="user-img" style="background-image: url(images/person_1.jpg)">
+								</div>
+							</div>
+						</div>
+						<div class="item">
+							<div class="testimony-wrap">
+								<div class="text bg-light p-4">
+									<span class="quote d-flex align-items-center justify-content-center">
+										<i class="icon-quote-left"></i>
+									</span>
+									<p>Loin, très loin, derrière les montagnes de mots, loin des pays Vokalia et Consonantia, vivent les textes aveugles.</p>
+									<p class="name">Henry Dee</p>
+									<span class="position">Homme d'Affaires</span>
+								</div>
+								<div class="user-img" style="background-image: url(images/person_2.jpg)">
+								</div>
+							</div>
+						</div>
+						<div class="item">
+							<div class="testimony-wrap">
+								<div class="text bg-light p-4">
+									<span class="quote d-flex align-items-center justify-content-center">
+										<i class="icon-quote-left"></i>
+									</span>
+									<p>Loin, très loin, derrière les montagnes de mots, loin des pays Vokalia et Consonantia, vivent les textes aveugles.</p>
+									<p class="name">Mark Huff</p>
+									<span class="position">Étudiant</span>
+								</div>
+								<div class="user-img" style="background-image: url(images/person_3.jpg)">
+								</div>
+							</div>
+						</div>
+						<div class="item">
+							<div class="testimony-wrap">
+								<div class="text bg-light p-4">
+									<span class="quote d-flex align-items-center justify-content-center">
+										<i class="icon-quote-left"></i>
+									</span>
+									<p>Loin, très loin, derrière les montagnes de mots, loin des pays Vokalia et Consonantia, vivent les textes aveugles.</p>
+									<p class="name">Rodel Golez</p>
+									<span class="position">Entrepreneur</span>
+								</div>
+								<div class="user-img" style="background-image: url(images/person_4.jpg)">
+								</div>
+							</div>
+						</div>
+						<div class="item">
+							<div class="testimony-wrap">
+								<div class="text bg-light p-4">
+									<span class="quote d-flex align-items-center justify-content-center">
+										<i class="icon-quote-left"></i>
+									</span>
+									<p>Loin, très loin, derrière les montagnes de mots, loin des pays Vokalia et Consonantia, vivent les textes aveugles.</p>
+									<p class="name">Ken Bosh</p>
+									<span class="position">Manager</span>
+								</div>
+								<div class="user-img" style="background-image: url(images/person_1.jpg)">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+
+	<section class="ftco-section bg-light">
+		<div class="container">
+			<div class="row justify-content-center mb-5 pb-2">
+				<div class="col-md-8 text-center heading-section ftco-animate">
+					<span class="subheading">Blog</span>
+					<h2 class="mb-4">Articles Récents</h2>
+					<p>Séparés, ils vivent. Une petite rivière nommée Duden coule près de leur lieu et leur fournit la regelialia nécessaire. C'est un pays paradisiaque</p>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-4 ftco-animate">
+					<div class="blog-entry">
+						<a href="blog-single.html" class="block-20"
+							style="background-image: url('images/image_1.jpg');">
+							<div class="meta-date text-center p-2">
+								<span class="day">07</span>
+								<span class="mos">Février</span>
+								<span class="yr">2019</span>
+							</div>
+						</a>
+						<div class="text pt-4">
+							<h3 class="heading"><a href="#">Bureau de la Floride</a></h3>
+							<p>Loin, très loin, derrière les montagnes de mots, loin des pays Vokalia et Consonantia, vivent les textes aveugles.</p>
+							<div class="d-flex align-items-center mt-4">
+								<p class="mb-0"><a href="#" class="btn btn-primary">Lire Plus <span
+											class="ion-ios-arrow-round-forward"></span></a></p>
+								<p class="ml-auto mb-0">
+									<a href="#" class="mr-2">Admin</a>
+									<a href="#" class="meta-chat"><span class="icon-chat"></span> 3</a>
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4 ftco-animate">
+					<div class="blog-entry">
+						<a href="blog-single.html" class="block-20"
+							style="background-image: url('images/image_2.jpg');">
+							<div class="meta-date text-center p-2">
+								<span class="day">07</span>
+								<span class="mos">Février</span>
+								<span class="yr">2019</span>
+							</div>
+						</a>
+						<div class="text pt-4">
+							<h3 class="heading"><a href="#">Projet de Construction Moderne</a></h3>
+							<p>Loin, très loin, derrière les montagnes de mots, loin des pays Vokalia et Consonantia, vivent les textes aveugles.</p>
+							<div class="d-flex align-items-center mt-4">
+								<p class="mb-0"><a href="#" class="btn btn-primary">Lire Plus <span
+											class="ion-ios-arrow-round-forward"></span></a></p>
+								<p class="ml-auto mb-0">
+									<a href="#" class="mr-2">Admin</a>
+									<a href="#" class="meta-chat"><span class="icon-chat"></span> 3</a>
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4 ftco-animate">
+					<div class="blog-entry">
+						<a href="blog-single.html" class="block-20"
+							style="background-image: url('images/image_3.jpg');">
+							<div class="meta-date text-center p-2">
+								<span class="day">07</span>
+								<span class="mos">Février</span>
+								<span class="yr">2019</span>
+							</div>
+						</a>
+						<div class="text pt-4">
+							<h3 class="heading"><a href="#">Innovations Architecturales</a></h3>
+							<p>Loin, très loin, derrière les montagnes de mots, loin des pays Vokalia et Consonantia, vivent les textes aveugles.</p>
+							<div class="d-flex align-items-center mt-4">
+								<p class="mb-0"><a href="#" class="btn btn-primary">Lire Plus <span
+											class="ion-ios-arrow-round-forward"></span></a></p>
+								<p class="ml-auto mb-0">
+									<a href="#" class="mr-2">Admin</a>
+									<a href="#" class="meta-chat"><span class="icon-chat"></span> 3</a>
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+
+	<footer class="ftco-footer ftco-bg-dark ftco-section" id="ftco-footer">
+		<!-- Footer sera injecté ici par components.js -->
+	</footer>
+
+
+
+	<!-- loader -->
+	<div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px">
+			<circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee" />
+			<circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10"
+				stroke="#F96D00" />
+		</svg></div>
+
+
+	<script src="js/jquery.min.js"></script>
+	<script src="js/jquery-migrate-3.0.1.min.js"></script>
+	<script src="js/popper.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/jquery.easing.1.3.js"></script>
+	<script src="js/jquery.waypoints.min.js"></script>
+	<script src="js/jquery.stellar.min.js"></script>
+	<script src="js/owl.carousel.min.js"></script>
+	<script src="js/jquery.magnific-popup.min.js"></script>
+	<script src="js/aos.js"></script>
+	<script src="js/jquery.animateNumber.min.js"></script>
+	<script src="js/bootstrap-datepicker.js"></script>
+	<script src="js/jquery.timepicker.min.js"></script>
+	<script src="js/scrollax.min.js"></script>
+	<!-- Google Maps non nécessaire sur la page d'accueil -->
+	<!-- <script src="js/google-map.js"></script> -->
+	<script src="js/main.js"></script>
+	<!-- <script>
+	// Récupération dynamique des projets Featured Projects et ajout dans le portfolio globalData
+	(function() {
+	  // Sélectionner tous les projets dans la section Featured Projects
+	  const projectNodes = document.querySelectorAll('.ftco-section .project');
+	  let portfolio = [];
+	  projectNodes.forEach(node => {
+	    const img = node.querySelector('img');
+	    const title = node.querySelector('h3') ? node.querySelector('h3').innerText : '';
+	    const type = node.querySelector('.text span') ? node.querySelector('.text span').innerText : '';
+	    const description = img && img.alt ? img.alt : 'Projet présenté sur le site.';
+	    portfolio.push({
+	      image: img ? img.getAttribute('src') : '',
+	      title,
+	      description,
+	      type
+	    });
+	  });
+	  // Charger les données globales existantes
+	  let globalData = window.getGlobalData ? window.getGlobalData() : {};
+	  globalData.portfolio = portfolio;
+	  localStorage.setItem('globalData', JSON.stringify(globalData));
+
+	  // Affichage dynamique des projets depuis globalData
+	  const featuredRow = document.querySelector('.ftco-section .row.no-gutters');
+	  if (featuredRow) {
+	    // Supprimer les anciens projets
+	    featuredRow.querySelectorAll('.col-md-6.col-lg-3').forEach(e => e.remove());
+	    // Ajouter les projets du portfolio
+	    globalData.portfolio.forEach(proj => {
+	      const col = document.createElement('div');
+	      col.className = 'col-md-6 col-lg-3 ftco-animate';
+	      col.innerHTML = `
+	        <div class="project">
+	          <img src="${proj.image}" class="img-fluid" alt="${proj.title}">
+	          <div class="text">
+	            <span>${proj.type}</span>
+	            <h3><a href="project.html">${proj.title}</a></h3>
+	          </div>
+	          <a href="${proj.image}" class="icon image-popup d-flex justify-content-center align-items-center">
+	            <span class="icon-expand"></span>
+	          </a>
+	        </div>
+	      `;
+	      featuredRow.appendChild(col);
+	    });
+	  }
+	})();
+	</script> -->
+	
+	<!-- Bouton de test de traduction flotant (pour debug) -->
+	<div id="translation-test-button" style="
+		position: fixed;
+		bottom: 20px;
+		right: 20px;
+		z-index: 9999;
+		background: linear-gradient(45deg, #28a745, #20c997);
+		color: white;
+		padding: 10px 15px;
+		border-radius: 50px;
+		cursor: pointer;
+		font-size: 12px;
+		box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+		transition: all 0.3s ease;
+		user-select: none;
+		display: none;
+	" onclick="toggleTranslationTest()">
+		🌍 Test
+	</div>
+	
+	<script>
+		// Fonction pour afficher/masquer le bouton de test
+		function toggleTranslationTestButton() {
+			const button = document.getElementById('translation-test-button');
+			if (button) {
+				// Afficher le bouton seulement si nous sommes en mode dev/test
+				if (window.location.href.includes('localhost') || window.location.href.includes('file:')) {
+					button.style.display = 'block';
+				}
+			}
+		}
+		
+		// Fonction pour tester la traduction
+		async function toggleTranslationTest() {
+			const button = document.getElementById('translation-test-button');
+			const currentLang = localStorage.getItem('siteLanguage') || 'fr';
+			
+			try {
+				if (currentLang === 'fr') {
+					button.innerHTML = '🔄 Vers EN...';
+					button.style.background = 'linear-gradient(45deg, #007bff, #0056b3)';
+					await window.smartTranslator.translatePage('en');
+					localStorage.setItem('siteLanguage', 'en');
+					button.innerHTML = '🇫🇷 Vers FR';
+					button.style.background = 'linear-gradient(45deg, #dc3545, #c82333)';
+				} else {
+					button.innerHTML = '🔄 Vers FR...';
+					button.style.background = 'linear-gradient(45deg, #007bff, #0056b3)';
+					await window.smartTranslator.translatePage('fr');
+					localStorage.setItem('siteLanguage', 'fr');
+					button.innerHTML = '🇬🇧 Vers EN';
+					button.style.background = 'linear-gradient(45deg, #28a745, #20c997)';
+				}
+			} catch (error) {
+				console.error('Erreur lors du test de traduction:', error);
+				button.innerHTML = '❌ Erreur';
+				button.style.background = 'linear-gradient(45deg, #dc3545, #c82333)';
+				setTimeout(() => {
+					button.innerHTML = '🌍 Test';
+					button.style.background = 'linear-gradient(45deg, #28a745, #20c997)';
+				}, 2000);
+			}
+		}
+		
+		// Fonction de diagnostic rapide
+		function quickDiagnostic() {
+			console.log('=== DIAGNOSTIC RAPIDE ===');
+			console.log('1. Smart Translator:', window.smartTranslator ? '✓ Chargé' : '❌ Non trouvé');
+			console.log('2. Dictionnaire:', window.translationDictionary ? '✓ Chargé' : '❌ Non trouvé');
+			console.log('3. Langue actuelle:', localStorage.getItem('siteLanguage') || 'fr');
+			
+			if (window.smartTranslator) {
+				const elements = window.smartTranslator.collectTranslatableElements();
+				console.log('4. Éléments traduisibles:', elements.length);
+				console.log('5. Cache traductions:', window.smartTranslator.cache.size);
+			}
+			
+			console.log('=== FIN DIAGNOSTIC ===');
+		}
+		
+		// Initialisation
+		window.addEventListener('load', function() {
+			toggleTranslationTestButton();
+			
+			// Diagnostic automatique au chargement
+			setTimeout(quickDiagnostic, 2000);
+		});
+		
+		// Rendre les fonctions accessibles globalement
+		window.toggleTranslationTest = toggleTranslationTest;
+		window.quickDiagnostic = quickDiagnostic;
+	</script>
+
+</body>
+</html>

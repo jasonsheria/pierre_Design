@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Changement de Thème</title>
+    
+    <!-- CSS Bootstrap et styles -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800,900" rel="stylesheet">
+    <link rel="stylesheet" href="css/open-iconic-bootstrap.min.css">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="css/magnific-popup.css">
+    <link rel="stylesheet" href="css/aos.css">
+    <link rel="stylesheet" href="css/ionicons.min.css">
+    <link rel="stylesheet" href="css/flaticon.css">
+    <link rel="stylesheet" href="css/icomoon.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/theme-enhanced.css">
+    
+    <style>
+        .theme-test-container {
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .theme-selector {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .theme-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .theme-btn {
+            padding: 10px 15px;
+            border: 2px solid transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .theme-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .theme-btn.active {
+            border-color: #1683fb;
+            box-shadow: 0 0 10px rgba(22, 131, 251, 0.3);
+        }
+        .theme-preview {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .color-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .color-item {
+            text-align: center;
+            padding: 10px;
+            border-radius: 6px;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .content-sample {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .status-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            min-width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Container -->
+    <div id="navigation"><!-- Navigation will be loaded here --></div>
+    
+    <!-- Status Indicator -->
+    <div class="status-indicator">
+        <div><strong>🎨 Thème actuel:</strong></div>
+        <div id="currentThemeDisplay">Chargement...</div>
+        <div style="margin-top: 10px;"><strong>📊 Statut:</strong></div>
+        <div id="themeStatus">Initialisation...</div>
+    </div>
+    
+    <div class="theme-test-container">
+        <div class="container">
+            <h1>🎨 Test Changement de Thème</h1>
+            <p>Testez les différents thèmes prédéfinis et observez les changements en temps réel.</p>
+            
+            <!-- Sélecteur de thème -->
+            <div class="theme-selector">
+                <h3>🎯 Sélecteur de Thème</h3>
+                <p>Cliquez sur un thème pour l'appliquer instantanément :</p>
+                
+                <div class="theme-buttons">
+                    <button class="theme-btn" onclick="changeTheme('default')" style="background: linear-gradient(45deg, #1683fb, #ff9800); color: white;">
+                        🏠 Défaut
+                    </button>
+                    <button class="theme-btn" onclick="changeTheme('dark')" style="background: linear-gradient(45deg, #0f172a, #f59e0b); color: white;">
+                        🌙 Sombre
+                    </button>
+                    <button class="theme-btn" onclick="changeTheme('nature')" style="background: linear-gradient(45deg, #059669, #10b981); color: white;">
+                        🌿 Nature
+                    </button>
+                    <button class="theme-btn" onclick="changeTheme('sunset')" style="background: linear-gradient(45deg, #ea580c, #f59e0b); color: white;">
+                        🌅 Coucher de soleil
+                    </button>
+                    <button class="theme-btn" onclick="changeTheme('ocean')" style="background: linear-gradient(45deg, #0ea5e9, #06b6d4); color: white;">
+                        🌊 Océan
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Aperçu des couleurs du thème -->
+            <div class="theme-preview">
+                <h3>🎨 Aperçu des Couleurs</h3>
+                <div class="color-display" id="colorDisplay">
+                    <!-- Colors will be populated here -->
+                </div>
+            </div>
+            
+            <!-- Contenu d'exemple pour voir l'effet -->
+            <div class="content-sample">
+                <h2 class="text-primary">Titre avec couleur primaire</h2>
+                <p>Ceci est un paragraphe de texte normal pour tester l'apparence.</p>
+                
+                <div style="margin: 20px 0;">
+                    <button class="btn btn-primary">Bouton Primaire</button>
+                    <button class="btn btn-outline-primary">Bouton Outline</button>
+                </div>
+                
+                <div style="background: var(--theme-bg-light, #f8f9fa); padding: 15px; border-radius: 6px; margin: 15px 0;">
+                    <p><strong>Section avec background thématique</strong></p>
+                    <p>Cette section utilise les variables CSS du thème.</p>
+                </div>
+                
+                <div>
+                    <a href="#" style="color: var(--theme-primary);">Lien avec couleur thématique</a> |
+                    <a href="#" style="color: var(--theme-accent1);">Lien accent</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer Container -->
+    <div id="ftco-footer"><!-- Footer will be loaded here --></div>
+    
+    <!-- Scripts dans le bon ordre -->
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/jquery-migrate-3.0.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/globalData.js"></script>
+    <script src="js/translationDictionary.js"></script>
+    <script src="js/smartTranslator.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/theme-controller.js"></script>
+    
+    <script>
+        let currentTheme = 'default';
+        
+        // Attendre que globalData soit prêt
+        document.addEventListener('globalDataReady', function() {
+            console.log('🟢 Événement globalDataReady reçu');
+            initThemeTest();
+        });
+
+        // Fallback
+        setTimeout(() => {
+            if (typeof window.getGlobalData !== 'function') {
+                console.log('🔄 Démarrage en mode fallback');
+                initThemeTest();
+            }
+        }, 1000);
+
+        function initThemeTest() {
+            // Charger navigation et footer
+            if (typeof window.loadNavigation === 'function') {
+                window.loadNavigation();
+            }
+            if (typeof window.loadFooter === 'function') {
+                window.loadFooter();
+            }
+            
+            // Écouter les changements de thème
+            window.addEventListener('themeChanged', function(event) {
+                console.log('🎨 Thème changé:', event.detail.theme);
+                updateThemeDisplay();
+                updateColorDisplay();
+            });
+            
+            // Mise à jour initiale
+            updateThemeDisplay();
+            updateColorDisplay();
+            
+            console.log('✅ Test de thème initialisé');
+        }
+        
+        function changeTheme(themeName) {
+            console.log('🔄 Changement vers le thème:', themeName);
+            
+            if (typeof window.setTheme === 'function') {
+                const success = window.setTheme(themeName);
+                if (success) {
+                    currentTheme = themeName;
+                    updateActiveButton();
+                    document.getElementById('themeStatus').textContent = `✅ Thème "${themeName}" appliqué`;
+                } else {
+                    document.getElementById('themeStatus').textContent = `❌ Erreur lors de l'application du thème "${themeName}"`;
+                }
+            } else {
+                document.getElementById('themeStatus').textContent = '❌ Fonction setTheme non disponible';
+                console.error('Fonction setTheme non disponible');
+            }
+        }
+        
+        function updateActiveButton() {
+            // Retirer la classe active de tous les boutons
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Ajouter la classe active au bouton correspondant
+            const buttons = document.querySelectorAll('.theme-btn');
+            const themeNames = ['default', 'dark', 'nature', 'sunset', 'ocean'];
+            const index = themeNames.indexOf(currentTheme);
+            if (index !== -1 && buttons[index]) {
+                buttons[index].classList.add('active');
+            }
+        }
+        
+        function updateThemeDisplay() {
+            const theme = typeof window.getTheme === 'function' ? window.getTheme() : null;
+            if (theme) {
+                document.getElementById('currentThemeDisplay').textContent = theme.name || 'Thème personnalisé';
+            } else {
+                document.getElementById('currentThemeDisplay').textContent = 'Non disponible';
+            }
+        }
+        
+        function updateColorDisplay() {
+            const theme = typeof window.getTheme === 'function' ? window.getTheme() : null;
+            const container = document.getElementById('colorDisplay');
+            
+            if (!theme || !theme.colors) {
+                container.innerHTML = '<div style="text-align: center; color: #999;">Couleurs non disponibles</div>';
+                return;
+            }
+            
+            const colors = theme.colors;
+            const colorKeys = [
+                { key: 'primary', label: 'Primaire' },
+                { key: 'accent1', label: 'Accent 1' },
+                { key: 'accent2', label: 'Accent 2' },
+                { key: 'navbarBg', label: 'Navbar' },
+                { key: 'textPrimary', label: 'Texte' },
+                { key: 'bgLight', label: 'Background' }
+            ];
+            
+            container.innerHTML = colorKeys
+                .filter(colorInfo => colors[colorInfo.key])
+                .map(colorInfo => `
+                    <div class="color-item" style="background-color: ${colors[colorInfo.key]}; color: ${getContrastColor(colors[colorInfo.key])};">
+                        <div>${colorInfo.label}</div>
+                        <div>${colors[colorInfo.key]}</div>
+                    </div>
+                `).join('');
+        }
+        
+        function getContrastColor(hexColor) {
+            // Convertir hex en RGB
+            const r = parseInt(hexColor.slice(1, 3), 16);
+            const g = parseInt(hexColor.slice(3, 5), 16);
+            const b = parseInt(hexColor.slice(5, 7), 16);
+            
+            // Calculer la luminance
+            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            
+            return luminance > 0.5 ? '#000000' : '#ffffff';
+        }
+    </script>
+</body>
+</html>

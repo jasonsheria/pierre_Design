@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Navigation Sticky</title>
+    
+    <!-- CSS Bootstrap et styles -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800,900" rel="stylesheet">
+    <link rel="stylesheet" href="css/open-iconic-bootstrap.min.css">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="css/magnific-popup.css">
+    <link rel="stylesheet" href="css/aos.css">
+    <link rel="stylesheet" href="css/ionicons.min.css">
+    <link rel="stylesheet" href="css/flaticon.css">
+    <link rel="stylesheet" href="css/icomoon.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/theme-enhanced.css">
+    
+    <style>
+        .test-content {
+            height: 3000px;
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+            padding: 20px;
+        }
+        .scroll-indicator {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 999;
+        }
+        .marker {
+            margin: 100px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .marker.scroll-150 { background: #ffeb3b; }
+        .marker.scroll-350 { background: #4caf50; color: white; }
+        .marker.scroll-500 { background: #2196f3; color: white; }
+        .marker.scroll-1000 { background: #9c27b0; color: white; }
+    </style>
+</head>
+<body>
+    <!-- Navigation Container -->
+    <div id="navigation"><!-- Navigation will be loaded here --></div>
+    
+    <!-- Content pour tester le scroll -->
+    <div class="test-content">
+        <div class="container">
+            <h1>🧪 Test Navigation Sticky</h1>
+            <p>Faites défiler vers le bas pour tester l'effet sticky de la navigation.</p>
+            
+            <div class="marker" style="margin-top: 50px;">
+                <h3>🏁 Point de départ (0px)</h3>
+                <p>La navigation devrait être en mode normal.</p>
+            </div>
+            
+            <div class="marker scroll-150" style="margin-top: 150px;">
+                <h3>🔽 Scroll 150px - Mode "scrolled"</h3>
+                <p>La navigation devrait maintenant être fixe avec la classe "scrolled".</p>
+                <p>Elle devrait avoir un fond blanc et être collée en haut de l'écran.</p>
+            </div>
+            
+            <div class="marker scroll-350" style="margin-top: 200px;">
+                <h3>🚀 Scroll 350px - Mode "awake"</h3>
+                <p>La navigation devrait maintenant être visible (margin-top: 0).</p>
+                <p>Classes: "scrolled" + "awake"</p>
+            </div>
+            
+            <div class="marker scroll-500" style="margin-top: 150px;">
+                <h3>📍 Scroll 500px+</h3>
+                <p>La navigation reste en mode "scrolled awake".</p>
+            </div>
+            
+            <div class="marker scroll-1000" style="margin-top: 500px;">
+                <h3>🎯 Scroll 1000px+</h3>
+                <p>Test de fonctionnement sur un long scroll.</p>
+                <p>La navigation devrait toujours être visible et fixe.</p>
+            </div>
+            
+            <div class="marker" style="margin-top: 1000px;">
+                <h3>🏁 Fin du test</h3>
+                <p>Remontez vers le haut pour voir les transitions inverses.</p>
+                <ul>
+                    <li>Scroll < 350px : perte de la classe "awake", ajout de "sleep"</li>
+                    <li>Scroll < 150px : perte de "scrolled" et "sleep", retour normal</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Indicateur de scroll -->
+    <div class="scroll-indicator">
+        <div><strong>Scroll:</strong> <span id="scrollValue">0</span>px</div>
+        <div><strong>Classes navigation:</strong></div>
+        <div id="navClasses">-</div>
+        <div style="margin-top: 10px;"><strong>État:</strong></div>
+        <div id="navState">Normal</div>
+    </div>
+    
+    <!-- Scripts dans le bon ordre -->
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/jquery-migrate-3.0.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/globalData.js"></script>
+    <script src="js/translationDictionary.js"></script>
+    <script src="js/smartTranslator.js"></script>
+    <script src="js/components.js"></script>
+    
+    <script>
+        // Attendre que globalData soit prêt
+        document.addEventListener('globalDataReady', function() {
+            console.log('🟢 Événement globalDataReady reçu');
+            initTest();
+        });
+
+        // Fallback
+        setTimeout(() => {
+            if (typeof window.getGlobalData !== 'function') {
+                console.log('🔄 Démarrage en mode fallback');
+                initTest();
+            }
+        }, 1000);
+
+        function initTest() {
+            // Charger la navigation
+            if (typeof window.loadNavigation === 'function') {
+                window.loadNavigation();
+                console.log('✅ Navigation chargée');
+                
+                // Surveiller le scroll pour afficher les informations
+                window.addEventListener('scroll', updateScrollInfo);
+                updateScrollInfo(); // Mise à jour initiale
+            } else {
+                console.error('❌ loadNavigation non disponible');
+            }
+        }
+        
+        function updateScrollInfo() {
+            const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+            const navbar = document.querySelector('#ftco-navbar') || document.querySelector('.ftco-navbar-light');
+            
+            // Mettre à jour l'affichage du scroll
+            document.getElementById('scrollValue').textContent = Math.round(scrollY);
+            
+            if (navbar) {
+                // Afficher les classes
+                const classes = Array.from(navbar.classList).filter(cls => 
+                    ['scrolled', 'awake', 'sleep', 'ftco-navbar-light'].includes(cls)
+                );
+                document.getElementById('navClasses').textContent = classes.join(', ') || 'aucune';
+                
+                // Déterminer l'état
+                let state = 'Normal';
+                if (navbar.classList.contains('scrolled')) {
+                    if (navbar.classList.contains('awake')) {
+                        state = 'Sticky Visible (scrolled + awake)';
+                    } else if (navbar.classList.contains('sleep')) {
+                        state = 'Sticky Caché (scrolled + sleep)';
+                    } else {
+                        state = 'Sticky (scrolled)';
+                    }
+                }
+                document.getElementById('navState').textContent = state;
+            } else {
+                document.getElementById('navClasses').textContent = 'Navigation non trouvée';
+                document.getElementById('navState').textContent = 'Erreur';
+            }
+        }
+    </script>
+</body>
+</html>

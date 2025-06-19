@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Navigation Footer</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/theme-enhanced.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <h1 class="text-center py-3">Test Navigation et Footer</h1>
+        
+        <!-- Zone Navigation -->
+        <div id="navigation" style="border: 2px solid #007bff; margin: 1rem 0; min-height: 60px;">
+            <!-- Navigation sera injectée ici -->
+        </div>
+        
+        <!-- Contenu de test -->
+        <div class="py-5 text-center">
+            <h2>Contenu Principal</h2>
+            <p>Cette page teste uniquement la navigation et le footer.</p>
+            <button onclick="window.diagnoseComponents()" class="btn btn-primary">🔍 Diagnostic</button>
+            <button onclick="forceReload()" class="btn btn-success">⚡ Recharger</button>
+        </div>
+        
+        <!-- Zone Footer -->
+        <footer id="ftco-footer" style="border: 2px solid #28a745; margin: 1rem 0; min-height: 100px;">
+            <!-- Footer sera injecté ici -->
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/globalData.js"></script>
+    <script src="js/translationDictionary.js"></script>
+    <script src="js/smartTranslator.js"></script>
+    <script src="js/components.js"></script>
+    
+    <script>
+        function forceReload() {
+            console.log('⚡ Rechargement forcé des composants...');
+            
+            if (typeof window.loadNavigation === 'function') {
+                window.loadNavigation();
+            }
+            
+            if (typeof window.loadFooter === 'function') {
+                window.loadFooter();
+            }
+            
+            setTimeout(() => {
+                if (typeof window.diagnoseComponents === 'function') {
+                    window.diagnoseComponents();
+                }
+            }, 500);
+        }
+        
+        // Test automatique après chargement
+        window.addEventListener('load', function() {
+            console.log('🚀 Page chargée, test dans 2 secondes...');
+            setTimeout(() => {
+                if (typeof window.diagnoseComponents === 'function') {
+                    window.diagnoseComponents();
+                } else {
+                    console.error('❌ diagnoseComponents non disponible');
+                }
+                
+                // Forcer le chargement si pas encore fait
+                setTimeout(forceReload, 1000);
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

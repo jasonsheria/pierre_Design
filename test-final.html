@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Final - Système de Thème Global</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/theme-enhanced.css">
+    <style>
+        .test-container {
+            padding: 2rem;
+            margin: 1rem 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .test-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .test-error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .theme-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .color-box {
+            width: 100%;
+            height: 60px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-5">
+        <div class="container">
+            <h1 class="text-center mb-5">🎨 Test Final - Système de Thème Global</h1>
+            
+            <!-- Test 1: Vérification de l'initialisation -->
+            <div class="test-container" id="test1">
+                <h3>Test 1: Initialisation des Variables Globales</h3>
+                <div id="test1-result"></div>
+            </div>
+
+            <!-- Test 2: Vérification du thème -->
+            <div class="test-container" id="test2">
+                <h3>Test 2: Configuration du Thème</h3>
+                <div id="test2-result"></div>
+                <div class="theme-preview" id="theme-preview"></div>
+            </div>
+
+            <!-- Test 3: Fonctions utilitaires -->
+            <div class="test-container" id="test3">
+                <h3>Test 3: Fonctions Utilitaires du Thème</h3>
+                <div id="test3-result"></div>
+            </div>
+
+            <!-- Test 4: Navigation et langues -->
+            <div class="test-container" id="test4">
+                <h3>Test 4: Navigation et Multilangue</h3>
+                <div id="test4-result"></div>
+            </div>
+
+            <!-- Test 5: Données du site -->
+            <div class="test-container" id="test5">
+                <h3>Test 5: Données du Site</h3>
+                <div id="test5-result"></div>
+            </div>
+
+            <!-- Résumé des tests -->
+            <div class="test-container mt-5" id="summary">
+                <h3>📊 Résumé des Tests</h3>
+                <div id="summary-result"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/globalData.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Début des tests du système de thème global');
+            
+            let testResults = [];
+
+            // Test 1: Vérification de l'initialisation
+            function test1() {
+                console.log('Test 1: Vérification de l\'initialisation');
+                const container = document.getElementById('test1');
+                const result = document.getElementById('test1-result');
+                
+                try {
+                    // Vérifier que window.globalData existe
+                    if (!window.globalData) {
+                        throw new Error('window.globalData n\'existe pas');
+                    }
+                    
+                    // Vérifier les sections principales
+                    const requiredSections = ['site', 'languages', 'navigation', 'theme'];
+                    const missingSections = requiredSections.filter(section => !window.globalData[section]);
+                    
+                    if (missingSections.length > 0) {
+                        throw new Error(`Sections manquantes: ${missingSections.join(', ')}`);
+                    }
+                    
+                    // Vérifier les fonctions globales
+                    const requiredFunctions = ['getGlobalData', 'getTheme', 'getThemeColor', 'getCurrentLanguage'];
+                    const missingFunctions = requiredFunctions.filter(func => typeof window[func] !== 'function');
+                    
+                    if (missingFunctions.length > 0) {
+                        throw new Error(`Fonctions manquantes: ${missingFunctions.join(', ')}`);
+                    }
+                    
+                    result.innerHTML = `
+                        <div class="alert alert-success">
+                            ✅ <strong>Test réussi!</strong><br>
+                            - GlobalData initialisé<br>
+                            - ${requiredSections.length} sections trouvées<br>
+                            - ${requiredFunctions.length} fonctions disponibles
+                        </div>
+                    `;
+                    container.classList.add('test-success');
+                    testResults.push(true);
+                } catch (error) {
+                    result.innerHTML = `
+                        <div class="alert alert-danger">
+                            ❌ <strong>Test échoué:</strong><br>
+                            ${error.message}
+                        </div>
+                    `;
+                    container.classList.add('test-error');
+                    testResults.push(false);
+                }
+            }
+
+            // Test 2: Vérification du thème
+            function test2() {
+                console.log('Test 2: Vérification du thème');
+                const container = document.getElementById('test2');
+                const result = document.getElementById('test2-result');
+                const preview = document.getElementById('theme-preview');
+                
+                try {
+                    const theme = window.getTheme();
+                    
+                    if (!theme || !theme.colors) {
+                        throw new Error('Configuration du thème manquante');
+                    }
+                    
+                    // Vérifier les couleurs principales
+                    const colors = theme.colors;
+                    const requiredColors = ['primary', 'secondary', 'accent'];
+                    const missingColors = requiredColors.filter(color => !colors[color]);
+                    
+                    if (missingColors.length > 0) {
+                        throw new Error(`Couleurs manquantes: ${missingColors.join(', ')}`);
+                    }
+                    
+                    // Créer la prévisualisation des couleurs
+                    preview.innerHTML = `
+                        <div class="color-box" style="background-color: ${colors.primary}">
+                            Primary<br>${colors.primary}
+                        </div>
+                        <div class="color-box" style="background-color: ${colors.secondary}">
+                            Secondary<br>${colors.secondary}
+                        </div>
+                        <div class="color-box" style="background-color: ${colors.accent}">
+                            Accent<br>${colors.accent}
+                        </div>
+                    `;
+                    
+                    result.innerHTML = `
+                        <div class="alert alert-success">
+                            ✅ <strong>Test réussi!</strong><br>
+                            - Thème chargé avec ${Object.keys(theme).length} sections<br>
+                            - Couleurs principales disponibles<br>
+                            - Polices: ${Object.keys(theme.fonts || {}).length} définies<br>
+                            - Espacements: ${Object.keys(theme.spacing || {}).length} définis
+                        </div>
+                    `;
+                    container.classList.add('test-success');
+                    testResults.push(true);
+                } catch (error) {
+                    result.innerHTML = `
+                        <div class="alert alert-danger">
+                            ❌ <strong>Test échoué:</strong><br>
+                            ${error.message}
+                        </div>
+                    `;
+                    container.classList.add('test-error');
+                    testResults.push(false);
+                }
+            }
+
+            // Test 3: Fonctions utilitaires
+            function test3() {
+                console.log('Test 3: Fonctions utilitaires du thème');
+                const container = document.getElementById('test3');
+                const result = document.getElementById('test3-result');
+                
+                try {
+                    // Test getThemeColor
+                    const primaryColor = window.getThemeColor('primary');
+                    if (!primaryColor) {
+                        throw new Error('getThemeColor("primary") retourne null');
+                    }
+                    
+                    // Test getThemeSpacing
+                    const mediumSpacing = window.getThemeSpacing('md');
+                    if (!mediumSpacing) {
+                        throw new Error('getThemeSpacing("md") retourne null');
+                    }
+                    
+                    // Test getThemeFont
+                    const primaryFont = window.getThemeFont('primary');
+                    if (!primaryFont) {
+                        throw new Error('getThemeFont("primary") retourne null');
+                    }
+                    
+                    result.innerHTML = `
+                        <div class="alert alert-success">
+                            ✅ <strong>Test réussi!</strong><br>
+                            - getThemeColor('primary'): <code>${primaryColor}</code><br>
+                            - getThemeSpacing('md'): <code>${mediumSpacing}</code><br>
+                            - getThemeFont('primary'): <code>${primaryFont}</code>
+                        </div>
+                    `;
+                    container.classList.add('test-success');
+                    testResults.push(true);
+                } catch (error) {
+                    result.innerHTML = `
+                        <div class="alert alert-danger">
+                            ❌ <strong>Test échoué:</strong><br>
+                            ${error.message}
+                        </div>
+                    `;
+                    container.classList.add('test-error');
+                    testResults.push(false);
+                }
+            }
+
+            // Test 4: Navigation et langues
+            function test4() {
+                console.log('Test 4: Navigation et multilangue');
+                const container = document.getElementById('test4');
+                const result = document.getElementById('test4-result');
+                
+                try {
+                    // Test langue courante
+                    const currentLang = window.getCurrentLanguage();
+                    if (!currentLang) {
+                        throw new Error('getCurrentLanguage() retourne null');
+                    }
+                    
+                    // Test navigation localisée
+                    const navigation = window.getLocalizedData('navigation');
+                    if (!navigation || !Array.isArray(navigation)) {
+                        throw new Error('Navigation localisée introuvable');
+                    }
+                    
+                    // Test changement de langue
+                    const langChanged = window.setCurrentLanguage('en');
+                    if (!langChanged) {
+                        throw new Error('Impossible de changer la langue vers "en"');
+                    }
+                    
+                    // Remettre la langue originale
+                    window.setCurrentLanguage(currentLang);
+                    
+                    result.innerHTML = `
+                        <div class="alert alert-success">
+                            ✅ <strong>Test réussi!</strong><br>
+                            - Langue courante: <code>${currentLang}</code><br>
+                            - Navigation: ${navigation.length} éléments<br>
+                            - Changement de langue: ✅
+                        </div>
+                    `;
+                    container.classList.add('test-success');
+                    testResults.push(true);
+                } catch (error) {
+                    result.innerHTML = `
+                        <div class="alert alert-danger">
+                            ❌ <strong>Test échoué:</strong><br>
+                            ${error.message}
+                        </div>
+                    `;
+                    container.classList.add('test-error');
+                    testResults.push(false);
+                }
+            }
+
+            // Test 5: Données du site
+            function test5() {
+                console.log('Test 5: Données du site');
+                const container = document.getElementById('test5');
+                const result = document.getElementById('test5-result');
+                
+                try {
+                    const siteData = window.getGlobalData('site');
+                    if (!siteData) {
+                        throw new Error('Données du site introuvables');
+                    }
+                    
+                    const services = window.getLocalizedData('services');
+                    const projects = window.getLocalizedData('projects');
+                    const team = window.getLocalizedData('team');
+                    
+                    if (!services || !projects || !team) {
+                        throw new Error('Données localisées manquantes');
+                    }
+                    
+                    result.innerHTML = `
+                        <div class="alert alert-success">
+                            ✅ <strong>Test réussi!</strong><br>
+                            - Site: <code>${siteData.name}</code><br>
+                            - Services: ${services.length} éléments<br>
+                            - Projets: ${projects.length} éléments<br>
+                            - Équipe: ${team.length} membres
+                        </div>
+                    `;
+                    container.classList.add('test-success');
+                    testResults.push(true);
+                } catch (error) {
+                    result.innerHTML = `
+                        <div class="alert alert-danger">
+                            ❌ <strong>Test échoué:</strong><br>
+                            ${error.message}
+                        </div>
+                    `;
+                    container.classList.add('test-error');
+                    testResults.push(false);
+                }
+            }
+
+            // Afficher le résumé
+            function showSummary() {
+                const summary = document.getElementById('summary-result');
+                const passed = testResults.filter(r => r).length;
+                const total = testResults.length;
+                const success = passed === total;
+                
+                summary.innerHTML = `
+                    <div class="alert alert-${success ? 'success' : 'warning'} text-center">
+                        <h4>${success ? '🎉' : '⚠️'} Tests terminés</h4>
+                        <p class="h5">${passed}/${total} tests réussis</p>
+                        ${success ? 
+                            '<p><strong>✅ Système de thème global entièrement fonctionnel!</strong></p>' :
+                            '<p><strong>⚠️ Certains tests ont échoué. Vérifiez les détails ci-dessus.</strong></p>'
+                        }
+                    </div>
+                `;
+                
+                const summaryContainer = document.getElementById('summary');
+                summaryContainer.classList.add(success ? 'test-success' : 'test-error');
+                
+                console.log(`🏁 Tests terminés: ${passed}/${total} réussis`);
+            }
+
+            // Exécuter tous les tests
+            setTimeout(() => {
+                test1();
+                setTimeout(() => {
+                    test2();
+                    setTimeout(() => {
+                        test3();
+                        setTimeout(() => {
+                            test4();
+                            setTimeout(() => {
+                                test5();
+                                setTimeout(showSummary, 500);
+                            }, 500);
+                        }, 500);
+                    }, 500);
+                }, 500);
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

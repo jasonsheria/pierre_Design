@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Serveur Local</title>
+    
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #212529;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .test-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .status-banner {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .status-ready {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        
+        .status-testing {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            color: #8b4513;
+        }
+        
+        .status-success {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #155724;
+        }
+        
+        .status-error {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            color: #721c24;
+        }
+        
+        .test-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 8px;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            color: white;
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .test-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        .config-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+        }
+        
+        .form-control {
+            padding: 12px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            outline: none;
+        }
+        
+        .result-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .result-box {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 15px;
+            max-height: 350px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        
+        .result-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #667eea;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #667eea;
+            font-family: inherit;
+        }
+        
+        .log-container {
+            background: #2d3748;
+            color: #e2e8f0;
+            border-radius: 10px;
+            max-height: 250px;
+            overflow-y: auto;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 2px 0;
+        }
+        
+        .log-info { color: #63b3ed; }
+        .log-success { color: #68d391; }
+        .log-warning { color: #fbd38d; }
+        .log-error { color: #fc8181; }
+        
+        .connection-test {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: #e3f2fd;
+            border-radius: 20px;
+            font-size: 14px;
+            margin: 5px;
+        }
+        
+        .connection-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ffc107;
+            animation: pulse 2s infinite;
+        }
+        
+        .connection-dot.success { background: #28a745; animation: none; }
+        .connection-dot.error { background: #dc3545; animation: none; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        @media (max-width: 768px) {
+            .result-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Scripts -->
+    <script src="js/globalData.js"></script>
+    
+    <div class="container">
+        <div class="header">
+            <h1>🏠 Test Serveur Local</h1>
+            <p>Test de récupération de données depuis votre serveur local</p>
+            <div id="connection-status" class="connection-test">
+                <div class="connection-dot" id="connection-dot"></div>
+                <span id="connection-text">Vérification de la connexion...</span>
+            </div>
+        </div>
+        
+        <div class="test-card">
+            <div id="status-banner" class="status-banner status-ready">
+                🚀 Prêt pour le test de votre serveur local
+            </div>
+            
+            <div class="config-section">
+                <h4>⚙️ Configuration du Serveur</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <label><strong>URL du serveur :</strong></label>
+                        <input type="text" id="server-url" class="form-control" value="https://wise-server.onrender.com" placeholder="https://wise-server.onrender.com">
+                    </div>
+                    <div>
+                        <label><strong>ID du site :</strong></label>
+                        <input type="text" id="site-id" class="form-control" value="demo-11" placeholder="demo-11">
+                    </div>
+                </div>
+                <div style="margin-top: 10px; font-size: 14px; color: #6c757d;">
+                    <strong>URL complète :</strong> <span id="full-url">https://wise-server.onrender.com/site/details/demo-11</span>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin: 25px 0;">
+                <button class="test-btn btn-primary" onclick="testConnection()">
+                    🔗 Tester la Connexion
+                </button>
+                <button class="test-btn btn-success" onclick="fetchData()">
+                    📥 Récupérer les Données
+                </button>
+                <button class="test-btn btn-info" onclick="showGlobalData()">
+                    📊 Voir GlobalData
+                </button>
+                <button class="test-btn btn-warning" onclick="clearLog()">
+                    🗑️ Vider le Log
+                </button>
+            </div>
+        </div>
+          <div class="test-card">
+            <h4>📊 Résultats</h4>
+            <div class="result-section">
+                <div class="result-box">
+                    <div class="result-title">GlobalData Avant</div>
+                    <div id="data-before">Aucune donnée affichée</div>
+                </div>
+                <div class="result-box">
+                    <div class="result-title">GlobalData Après</div>
+                    <div id="data-after">Les données mises à jour apparaîtront ici</div>
+                </div>
+            </div>
+              <div style="margin-top: 20px;">
+                <h5>🏗️ Données Structurées du Serveur</h5>
+                <div class="result-section" style="grid-template-columns: 1fr 1fr 1fr;">
+                    <div>
+                        <h6>👤 Utilisateur</h6>
+                        <div id="user-info" class="result-box" style="display: none;">
+                            <div id="user-details">Aucune information utilisateur</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h6>🌐 Site</h6>
+                        <div id="site-info" class="result-box" style="display: none;">
+                            <div id="site-details">Aucune information site</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h6>🎨 Template</h6>
+                        <div id="template-info" class="result-box" style="display: none;">
+                            <div id="template-details">Aucune information template</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="result-section" style="grid-template-columns: 1fr 1fr 1fr; margin-top: 15px;">
+                    <div>
+                        <h6>📝 Posts</h6>
+                        <div id="posts-info" class="result-box" style="display: none;">
+                            <div id="posts-details">Aucun post</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h6>💼 Portfolio</h6>
+                        <div id="portfolio-info" class="result-box" style="display: none;">
+                            <div id="portfolio-details">Aucun projet portfolio</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h6>💬 Messages</h6>
+                        <div id="messages-info" class="result-box" style="display: none;">
+                            <div id="messages-details">Aucun message</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-card">
+            <h4>📝 Journal des Opérations</h4>
+            <div class="log-container" id="operation-log">
+                <div class="log-entry log-info">[INIT] Page de test chargée</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let originalGlobalData = null;
+        
+        // Mettre à jour l'URL complète
+        function updateFullUrl() {
+            const serverUrl = document.getElementById('server-url').value.trim();
+            const siteId = document.getElementById('site-id').value.trim();
+            const fullUrl = `${serverUrl}/site/details/${siteId}`;
+            document.getElementById('full-url').textContent = fullUrl;
+        }
+        
+        // Fonction de logging
+        function log(message, type = 'info') {
+            const logContainer = document.getElementById('operation-log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            console.log(`[LOCAL-SERVER-TEST] ${message}`);
+        }
+        
+        // Mettre à jour le statut
+        function updateStatus(message, type = 'ready') {
+            const banner = document.getElementById('status-banner');
+            banner.textContent = message;
+            banner.className = `status-banner status-${type}`;
+        }
+        
+        // Mettre à jour le statut de connexion
+        function updateConnectionStatus(status, message) {
+            const dot = document.getElementById('connection-dot');
+            const text = document.getElementById('connection-text');
+            
+            dot.className = `connection-dot ${status}`;
+            text.textContent = message;
+        }
+        
+        // Afficher les données
+        function displayData(data, elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = JSON.stringify(data, null, 2);
+            }
+        }
+        
+        // Tester la connexion au serveur
+        async function testConnection() {
+            const serverUrl = document.getElementById('server-url').value.trim();
+            
+            if (!serverUrl) {
+                log('❌ Veuillez saisir l\'URL du serveur', 'error');
+                return;
+            }
+            
+            log('🔗 Test de connexion au serveur...', 'info');
+            updateConnectionStatus('', 'Test en cours...');
+            updateStatus('🔄 Test de connexion...', 'testing');
+            
+            try {
+                // Test simple de ping sur le serveur
+                const response = await fetch(serverUrl, { 
+                    method: 'HEAD',
+                    mode: 'cors'
+                });
+                
+                if (response.ok || response.status === 405) { // 405 = Method Not Allowed (mais serveur répond)
+                    log('✅ Serveur accessible', 'success');
+                    updateConnectionStatus('success', 'Serveur accessible');
+                    updateStatus('✅ Serveur accessible - Prêt pour la récupération', 'success');
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                log(`❌ Serveur inaccessible: ${error.message}`, 'error');
+                updateConnectionStatus('error', 'Serveur inaccessible');
+                updateStatus('❌ Serveur inaccessible', 'error');
+                
+                if (error.message.includes('Failed to fetch') || error.message.includes('CORS')) {
+                    log('💡 Vérifiez que le serveur est démarré sur le port 5000', 'warning');
+                    log('💡 Assurez-vous que CORS est configuré sur le serveur', 'warning');
+                }
+            }
+        }
+        
+        // Récupérer les données
+        async function fetchData() {
+            const serverUrl = document.getElementById('server-url').value.trim();
+            const siteId = document.getElementById('site-id').value.trim();
+            
+            if (!serverUrl || !siteId) {
+                log('❌ Veuillez remplir tous les champs', 'error');
+                return;
+            }
+            
+            const fullUrl = `${serverUrl}/site/details/${siteId}`;
+            
+            log(`📥 Récupération des données depuis: ${fullUrl}`, 'info');
+            updateStatus('🔄 Récupération en cours...', 'testing');
+            
+            // Sauvegarder l'état actuel
+            originalGlobalData = JSON.parse(JSON.stringify(window.globalData));
+            displayData(originalGlobalData, 'data-before');
+            
+            try {
+                const success = await window.fetchAndMergeGlobalData(serverUrl, siteId);
+                
+                if (success) {
+                    log('✅ Données récupérées et fusionnées avec succès', 'success');
+                    updateStatus('✅ Données récupérées avec succès', 'success');
+                    displayData(window.globalData, 'data-after');
+                    
+                    // Analyser les changements
+                    analyzeChanges();
+                } else {
+                    log('❌ Échec de la récupération des données', 'error');
+                    updateStatus('❌ Échec de la récupération', 'error');
+                }
+            } catch (error) {
+                log(`❌ Erreur: ${error.message}`, 'error');
+                updateStatus('❌ Erreur lors de la récupération', 'error');
+            }
+        }        // Analyser les changements
+        function analyzeChanges() {
+            if (!originalGlobalData) return;
+            
+            log('🔍 Analyse des changements...', 'info');
+            
+            // Afficher toutes les sections de données
+            if (window.globalData.user) {
+                displayUserInfo(window.globalData.user);
+            }
+            
+            if (window.globalData.site) {
+                displaySiteInfo(window.globalData.site);
+            }
+            
+            if (window.globalData.template) {
+                displayTemplateInfo(window.globalData.template);
+            }
+            
+            if (window.globalData.posts) {
+                displayPostsInfo(window.globalData.posts);
+            }
+            
+            if (window.globalData.portfolio) {
+                displayPortfolioInfo(window.globalData.portfolio);
+            }
+            
+            if (window.globalData.messages) {
+                displayMessagesInfo(window.globalData.messages);
+            }
+            
+            function findChanges(original, updated, path = '') {
+                let changes = 0;
+                
+                for (const key in updated) {
+                    const currentPath = path ? `${path}.${key}` : key;
+                    
+                    if (!(key in original)) {
+                        log(`+ Ajout: ${currentPath}`, 'success');
+                        changes++;
+                    } else if (typeof updated[key] === 'object' && updated[key] !== null) {
+                        if (typeof original[key] === 'object' && original[key] !== null) {
+                            changes += findChanges(original[key], updated[key], currentPath);
+                        }
+                    } else if (original[key] !== updated[key]) {
+                        log(`~ Modification: ${currentPath}`, 'warning');
+                        changes++;
+                    }
+                }
+                
+                return changes;
+            }
+            
+            const totalChanges = findChanges(originalGlobalData, window.globalData);
+            
+            if (totalChanges === 0) {
+                log('ℹ️ Aucun changement détecté dans GlobalData', 'info');
+            } else {
+                log(`📊 Total: ${totalChanges} changement(s) appliqué(s)`, 'success');
+            }
+        }
+        
+        // Afficher les informations utilisateur
+        function displayUserInfo(user) {
+            const userInfoDiv = document.getElementById('user-info');
+            const userDetailsDiv = document.getElementById('user-details');
+            
+            if (user && userInfoDiv && userDetailsDiv) {
+                let userInfo = '';
+                
+                if (typeof user === 'object') {
+                    // Affichage formaté pour les nouvelles données structurées
+                    userInfo = JSON.stringify(user, null, 2);
+                } else {
+                    userInfo = 'Données utilisateur non structurées';
+                }
+                
+                userDetailsDiv.textContent = userInfo;
+                userInfoDiv.style.display = 'block';
+                log('👤 Informations utilisateur mises à jour', 'success');
+            }
+        }
+        
+        // Afficher les informations site
+        function displaySiteInfo(site) {
+            const siteInfoDiv = document.getElementById('site-info');
+            const siteDetailsDiv = document.getElementById('site-details');
+            
+            if (site && siteInfoDiv && siteDetailsDiv) {
+                const siteInfo = JSON.stringify(site, null, 2);
+                siteDetailsDiv.textContent = siteInfo;
+                siteInfoDiv.style.display = 'block';
+                log('🌐 Informations site mises à jour', 'success');
+            }
+        }
+        
+        // Afficher les informations template
+        function displayTemplateInfo(template) {
+            const templateInfoDiv = document.getElementById('template-info');
+            const templateDetailsDiv = document.getElementById('template-details');
+            
+            if (template && templateInfoDiv && templateDetailsDiv) {
+                const templateInfo = JSON.stringify(template, null, 2);
+                templateDetailsDiv.textContent = templateInfo;
+                templateInfoDiv.style.display = 'block';
+                log('🎨 Informations template mises à jour', 'success');
+            }
+        }
+        
+        // Afficher les informations posts
+        function displayPostsInfo(posts) {
+            const postsInfoDiv = document.getElementById('posts-info');
+            const postsDetailsDiv = document.getElementById('posts-details');
+            
+            if (posts && postsInfoDiv && postsDetailsDiv) {
+                let postsInfo = '';
+                
+                if (Array.isArray(posts)) {
+                    postsInfo = `Nombre de posts: ${posts.length}\n\n${JSON.stringify(posts, null, 2)}`;
+                } else {
+                    postsInfo = JSON.stringify(posts, null, 2);
+                }
+                
+                postsDetailsDiv.textContent = postsInfo;
+                postsInfoDiv.style.display = 'block';
+                log('� Informations posts mises à jour', 'success');
+            }
+        }
+          // Afficher les informations portfolio
+        function displayPortfolioInfo(portfolio) {
+            const portfolioInfoDiv = document.getElementById('portfolio-info');
+            const portfolioDetailsDiv = document.getElementById('portfolio-details');
+            
+            if (portfolio && portfolioInfoDiv && portfolioDetailsDiv) {
+                let portfolioInfo = '';
+                
+                if (portfolio.projects && Array.isArray(portfolio.projects)) {
+                    // Nouvelle structure adaptée
+                    portfolioInfo = `Structure Portfolio Adaptée:
+Nombre de projets: ${portfolio.projects.length}
+Catégories: ${portfolio.categories ? portfolio.categories.join(', ') : 'N/A'}
+
+Projets:
+${portfolio.projects.map((project, index) => `
+${index + 1}. ${project.title}
+   ID: ${project.id}
+   Catégorie: ${project.category}
+   Type: ${project.type}
+   Année: ${project.year}
+   Status: ${project.status}
+   Image: ${project.image}
+   Description: ${project.description.substring(0, 100)}...
+`).join('')}
+
+Données complètes:
+${JSON.stringify(portfolio, null, 2)}`;
+                } else if (Array.isArray(portfolio)) {
+                    // Format tableau simple
+                    portfolioInfo = `Format Tableau Simple:
+Nombre de projets: ${portfolio.length}
+
+${JSON.stringify(portfolio, null, 2)}`;
+                } else {
+                    // Format objet
+                    portfolioInfo = `Format Objet:
+${JSON.stringify(portfolio, null, 2)}`;
+                }
+                
+                portfolioDetailsDiv.textContent = portfolioInfo;
+                portfolioInfoDiv.style.display = 'block';
+                log('💼 Informations portfolio mises à jour', 'success');
+                
+                // Log spécial pour le portfolio
+                if (portfolio.projects && Array.isArray(portfolio.projects)) {
+                    log(`📊 Portfolio: ${portfolio.projects.length} projet(s) adapté(s)`, 'success');
+                    portfolio.projects.forEach((project, index) => {
+                        log(`   ${index + 1}. ${project.title} (${project.category}) - ${project.year}`, 'info');
+                    });
+                }
+            }
+        }
+        
+        // Afficher les informations messages
+        function displayMessagesInfo(messages) {
+            const messagesInfoDiv = document.getElementById('messages-info');
+            const messagesDetailsDiv = document.getElementById('messages-details');
+            
+            if (messages && messagesInfoDiv && messagesDetailsDiv) {
+                let messagesInfo = '';
+                
+                if (Array.isArray(messages)) {
+                    messagesInfo = `Nombre de messages: ${messages.length}\n\n${JSON.stringify(messages, null, 2)}`;
+                } else {
+                    messagesInfo = JSON.stringify(messages, null, 2);
+                }
+                
+                messagesDetailsDiv.textContent = messagesInfo;
+                messagesInfoDiv.style.display = 'block';
+                log('💬 Informations messages mises à jour', 'success');
+            }
+        }
+        
+        // Afficher GlobalData
+        function showGlobalData() {
+            log('📊 Affichage de GlobalData actuel', 'info');
+            displayData(window.globalData, 'data-before');
+            
+            const size = JSON.stringify(window.globalData).length;
+            log(`📈 Taille de GlobalData: ${size} caractères`, 'info');
+        }
+        
+        // Vider le log
+        function clearLog() {
+            const logContainer = document.getElementById('operation-log');
+            logContainer.innerHTML = '<div class="log-entry log-info">[CLEAR] Journal vidé</div>';
+            log('🗑️ Journal des opérations vidé', 'info');
+        }
+        
+        // Événements
+        document.getElementById('server-url').addEventListener('input', updateFullUrl);
+        document.getElementById('site-id').addEventListener('input', updateFullUrl);
+        
+        // Initialisation
+        window.addEventListener('load', function() {
+            log('🚀 Page de test serveur local initialisée', 'success');
+            
+            // Vérifier la disponibilité des fonctions
+            if (typeof window.fetchAndMergeGlobalData === 'function') {
+                log('✅ Fonction fetchAndMergeGlobalData disponible', 'success');
+            } else {
+                log('❌ Fonction fetchAndMergeGlobalData manquante', 'error');
+            }
+            
+            if (typeof window.globalData !== 'undefined') {
+                log('✅ GlobalData initialisé', 'success');
+            } else {
+                log('❌ GlobalData non disponible', 'error');
+            }
+            
+            updateFullUrl();
+            
+            // Test automatique de connexion après 1 seconde
+            setTimeout(() => {
+                log('🔄 Test automatique de connexion...', 'info');
+                testConnection();
+            }, 1000);
+        });
+        
+        // Écouter les événements GlobalData
+        window.addEventListener('globalDataUpdated', function(event) {
+            log(`🎯 Événement GlobalData reçu (source: ${event.detail.source})`, 'success');
+        });
+        
+        window.addEventListener('globalDataUpdateError', function(event) {
+            log(`💥 Erreur GlobalData: ${event.detail.error}`, 'error');
+        });
+    </script>
+</body>
+</html>

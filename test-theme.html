@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test du Système de Thème Global</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .test-results {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            border-left: 4px solid #007bff;
+        }
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .color-item {
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+        .theme-demo {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #dee2e6;
+        }
+        .font-sample {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            background: #f8f9fa;
+        }
+        .spacing-demo {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .spacing-item {
+            background: #007bff;
+            color: white;
+            text-align: center;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .warning { color: #ffc107; }
+        .info { color: #17a2b8; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎨 Test du Système de Thème Global</h1>
+        <p>Cette page teste et démontre le système de thème global intégré.</p>
+        
+        <div>
+            <h3>Tests de Base</h3>
+            <button class="test-button" onclick="testThemeAccess()">🔍 Test Accès Thème</button>
+            <button class="test-button" onclick="showColorPalette()">🎨 Palette de Couleurs</button>
+            <button class="test-button" onclick="showFontSamples()">🔤 Exemples de Polices</button>
+            <button class="test-button" onclick="showSpacingDemo()">📐 Démonstration Espacement</button>
+        </div>
+        
+        <div>
+            <h3>Tests Avancés</h3>
+            <button class="test-button" onclick="generateDynamicCSS()">📝 Générer CSS Dynamique</button>
+            <button class="test-button" onclick="injectThemeCSS()">💉 Injecter CSS Thème</button>
+            <button class="test-button" onclick="testThemeUpdate()">🔄 Test Mise à Jour Thème</button>
+            <button class="test-button" onclick="runDiagnostic()">🔍 Diagnostic Complet</button>
+        </div>
+        
+        <div>
+            <h3>Exemples Pratiques</h3>
+            <button class="test-button" onclick="demonstrateTheme()">🎭 Démonstration Complète</button>
+            <button class="test-button" onclick="testThemedComponents()">🧩 Test Composants</button>
+            <button class="test-button" onclick="testNotifications()">🔔 Test Notifications</button>
+            <button class="test-button" onclick="showGalleryExample()">🖼️ Exemple Galerie</button>
+        </div>
+        
+        <div class="test-results" id="test-results">
+            <strong>Résultats des tests :</strong>
+            <div id="results-content">Cliquez sur un bouton pour commencer les tests...</div>
+        </div>
+        
+        <div class="theme-demo" id="theme-demo" style="display: none;">
+            <h3>📋 Démonstration du Thème</h3>
+            <div id="demo-content"></div>
+        </div>
+    </div>
+
+    <!-- Éléments de test pour application du thème -->
+    <div class="test-container" id="style-test-container">
+        <h2>🧪 Zone de Test d'Application de Styles</h2>
+        <p class="test-text">Ce texte peut être stylé dynamiquement avec le thème.</p>
+        <button class="theme-test-button">Bouton de Test</button>
+        <div class="test-card">
+            <h4>Carte de Test</h4>
+            <p>Cette carte peut être stylée avec les couleurs du thème.</p>
+        </div>
+    </div>
+
+    <!-- Scripts nécessaires -->
+    <script src="js/globalData.js"></script>
+    <script src="js/theme-examples.js"></script>
+    
+    <script>
+        const resultsContent = document.getElementById('results-content');
+        const themeDemo = document.getElementById('theme-demo');
+        const demoContent = document.getElementById('demo-content');
+        
+        function addToResults(message, type = 'info') {
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
+            resultsContent.innerHTML += `<div class="${className}">✓ ${message}</div>`;
+        }
+        
+        function clearResults() {
+            resultsContent.innerHTML = '';
+        }
+        
+        function showDemo() {
+            themeDemo.style.display = 'block';
+        }
+        
+        function testThemeAccess() {
+            clearResults();
+            addToResults('🔍 Test d\'accès au système de thème...', 'info');
+            
+            try {
+                // Test des fonctions disponibles
+                const functions = [
+                    'getTheme', 'getThemeColor', 'getThemeSpacing', 'getThemeFont',
+                    'applyThemeStyles', 'generateThemeCSS', 'injectThemeCSS', 
+                    'updateTheme', 'diagnoseTheme'
+                ];
+                
+                functions.forEach(funcName => {
+                    if (typeof window[funcName] === 'function') {
+                        addToResults(`Fonction ${funcName} disponible`, 'success');
+                    } else {
+                        addToResults(`Fonction ${funcName} manquante`, 'error');
+                    }
+                });
+                
+                // Test d'accès aux données
+                const theme = window.getTheme();
+                if (theme) {
+                    addToResults('Thème global récupéré avec succès', 'success');
+                    addToResults(`${Object.keys(theme.colors).length} couleurs définies`, 'info');
+                    addToResults(`${Object.keys(theme.fonts).length} polices définies`, 'info');
+                    addToResults(`${Object.keys(theme.spacing).length} espacements définis`, 'info');
+                    
+                    // Test couleurs spécifiques
+                    const primaryColor = window.getThemeColor('primary');
+                    if (primaryColor) {
+                        addToResults(`Couleur primaire: ${primaryColor}`, 'success');
+                    }
+                } else {
+                    addToResults('Impossible de récupérer le thème', 'error');
+                }
+                
+            } catch (error) {
+                addToResults(`Erreur lors du test: ${error.message}`, 'error');
+            }
+        }
+        
+        function showColorPalette() {
+            clearResults();
+            addToResults('🎨 Génération de la palette de couleurs...', 'info');
+            
+            try {
+                const theme = window.getTheme();
+                if (!theme || !theme.colors) {
+                    addToResults('Couleurs du thème non disponibles', 'error');
+                    return;
+                }
+                
+                let paletteHTML = '<div class="color-grid">';
+                Object.entries(theme.colors).forEach(([name, color]) => {
+                    // Déterminer la couleur du texte (noir ou blanc) selon la luminosité
+                    const textColor = isLightColor(color) ? '#000000' : '#ffffff';
+                    paletteHTML += `
+                        <div class="color-item" style="background-color: ${color}; color: ${textColor};">
+                            <div><strong>${name}</strong></div>
+                            <div style="font-size: 12px; opacity: 0.9;">${color}</div>
+                        </div>
+                    `;
+                });
+                paletteHTML += '</div>';
+                
+                demoContent.innerHTML = paletteHTML;
+                showDemo();
+                addToResults(`Palette générée avec ${Object.keys(theme.colors).length} couleurs`, 'success');
+                
+            } catch (error) {
+                addToResults(`Erreur génération palette: ${error.message}`, 'error');
+            }
+        }
+        
+        function showFontSamples() {
+            clearResults();
+            addToResults('🔤 Génération des exemples de polices...', 'info');
+            
+            try {
+                const theme = window.getTheme();
+                if (!theme || !theme.fonts) {
+                    addToResults('Polices du thème non disponibles', 'error');
+                    return;
+                }
+                
+                let fontHTML = '<h4>Exemples de Polices</h4>';
+                Object.entries(theme.fonts).forEach(([name, font]) => {
+                    if (typeof font === 'string') {
+                        fontHTML += `
+                            <div class="font-sample" style="font-family: ${font};">
+                                <strong>${name}:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                <br><small style="opacity: 0.7;">Police: ${font}</small>
+                            </div>
+                        `;
+                    }
+                });
+                
+                // Tailles de police
+                fontHTML += '<h4>Tailles de Police</h4>';
+                Object.entries(theme.fonts.sizes || {}).forEach(([name, size]) => {
+                    fontHTML += `
+                        <div class="font-sample" style="font-size: ${size};">
+                            <strong>${name} (${size}):</strong> Exemple de texte
+                        </div>
+                    `;
+                });
+                
+                demoContent.innerHTML = fontHTML;
+                showDemo();
+                addToResults('Exemples de polices générés', 'success');
+                
+            } catch (error) {
+                addToResults(`Erreur génération polices: ${error.message}`, 'error');
+            }
+        }
+        
+        function showSpacingDemo() {
+            clearResults();
+            addToResults('📐 Génération de la démonstration d\'espacement...', 'info');
+            
+            try {
+                const theme = window.getTheme();
+                if (!theme || !theme.spacing) {
+                    addToResults('Espacements du thème non disponibles', 'error');
+                    return;
+                }
+                
+                let spacingHTML = '<h4>Valeurs d\'Espacement</h4><div class="spacing-demo">';
+                Object.entries(theme.spacing).forEach(([name, value]) => {
+                    spacingHTML += `
+                        <div class="spacing-item" style="width: ${value}; height: ${value}; min-width: 60px;">
+                            ${name}<br><small>${value}</small>
+                        </div>
+                    `;
+                });
+                spacingHTML += '</div>';
+                
+                demoContent.innerHTML = spacingHTML;
+                showDemo();
+                addToResults(`Démonstration générée avec ${Object.keys(theme.spacing).length} valeurs`, 'success');
+                
+            } catch (error) {
+                addToResults(`Erreur génération espacement: ${error.message}`, 'error');
+            }
+        }
+        
+        function generateDynamicCSS() {
+            clearResults();
+            addToResults('📝 Génération du CSS dynamique...', 'info');
+            
+            try {
+                const css = window.generateThemeCSS();
+                if (css) {
+                    addToResults('CSS dynamique généré avec succès', 'success');
+                    addToResults(`${css.split('\\n').length} lignes de CSS générées`, 'info');
+                    
+                    // Afficher un aperçu
+                    const preview = css.substring(0, 500) + '...';
+                    demoContent.innerHTML = `
+                        <h4>Aperçu du CSS Généré</h4>
+                        <pre style="background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; font-size: 12px;">${preview}</pre>
+                        <p><strong>Longueur totale:</strong> ${css.length} caractères</p>
+                    `;
+                    showDemo();
+                } else {
+                    addToResults('Erreur génération CSS', 'error');
+                }
+                
+            } catch (error) {
+                addToResults(`Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        function injectThemeCSS() {
+            clearResults();
+            addToResults('💉 Injection du CSS du thème...', 'info');
+            
+            try {
+                const success = window.injectThemeCSS();
+                if (success) {
+                    addToResults('CSS du thème injecté avec succès', 'success');
+                    addToResults('Vérifiez l\'élément <style> dans le <head>', 'info');
+                    
+                    // Vérifier l'injection
+                    const injectedStyle = document.getElementById('dynamic-theme-css');
+                    if (injectedStyle) {
+                        addToResults('Élément <style> trouvé dans le DOM', 'success');
+                        addToResults(`${injectedStyle.textContent.length} caractères de CSS injectés`, 'info');
+                    }
+                } else {
+                    addToResults('Échec de l\'injection CSS', 'error');
+                }
+                
+            } catch (error) {
+                addToResults(`Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        function testThemeUpdate() {
+            clearResults();
+            addToResults('🔄 Test de mise à jour du thème...', 'info');
+            
+            try {
+                // Sauvegarder la couleur primaire actuelle
+                const originalPrimary = window.getThemeColor('primary');
+                addToResults(`Couleur primaire actuelle: ${originalPrimary}`, 'info');
+                
+                // Tester une mise à jour
+                const newThemeData = {
+                    colors: {
+                        primary: '#ff6b35' // Orange vif
+                    }
+                };
+                
+                const success = window.updateTheme(newThemeData);
+                if (success) {
+                    const newPrimary = window.getThemeColor('primary');
+                    addToResults(`Thème mis à jour - nouvelle couleur: ${newPrimary}`, 'success');
+                    
+                    // Restaurer l'original après 3 secondes
+                    setTimeout(() => {
+                        window.updateTheme({ colors: { primary: originalPrimary } });
+                        addToResults('Couleur primaire restaurée', 'info');
+                    }, 3000);
+                } else {
+                    addToResults('Échec de la mise à jour', 'error');
+                }
+                
+            } catch (error) {
+                addToResults(`Erreur: ${error.message}`, 'error');
+            }
+        }
+        
+        function runDiagnostic() {
+            clearResults();
+            addToResults('🔍 Exécution du diagnostic complet...', 'info');
+            
+            try {
+                const theme = window.diagnoseTheme();
+                addToResults('Diagnostic exécuté - voir console pour détails', 'success');
+                
+                if (theme) {
+                    addToResults('✅ Système de thème opérationnel', 'success');
+                } else {
+                    addToResults('❌ Problèmes détectés dans le système de thème', 'error');
+                }
+                
+            } catch (error) {
+                addToResults(`Erreur diagnostic: ${error.message}`, 'error');
+            }
+        }
+        
+        function testThemedComponents() {
+            clearResults();
+            addToResults('🧩 Test des composants avec thème...', 'info');
+            
+            try {
+                // Tester la création de boutons
+                const button = window.createThemedButton('Test Button', 'primary', 'lg');
+                if (button && button.includes('background-color')) {
+                    addToResults('Bouton thématisé créé avec succès', 'success');
+                } else {
+                    addToResults('Échec création bouton', 'error');
+                }
+                
+                // Tester la création de cartes
+                const card = window.createThemedCard('Test Card', 'Contenu de test', 'accent1');
+                if (card && card.includes('border-left')) {
+                    addToResults('Carte thématisée créée avec succès', 'success');
+                } else {
+                    addToResults('Échec création carte', 'error');
+                }
+                
+                // Tester la création de formulaires
+                const form = window.createThemedForm([
+                    { label: 'Test', type: 'text', placeholder: 'Test input' }
+                ]);
+                if (form && form.includes('form')) {
+                    addToResults('Formulaire thématisé créé avec succès', 'success');
+                } else {
+                    addToResults('Échec création formulaire', 'error');
+                }
+                
+                // Afficher un exemple
+                demoContent.innerHTML = `
+                    <h4>Exemples de Composants</h4>
+                    <div style="margin: 15px 0;">${button}</div>
+                    ${card}
+                    <div style="margin-top: 20px;">${form}</div>
+                `;
+                showDemo();
+                
+            } catch (error) {
+                addToResults(`Erreur test composants: ${error.message}`, 'error');
+            }
+        }
+        
+        function testNotifications() {
+            clearResults();
+            addToResults('🔔 Test des notifications thématisées...', 'info');
+            
+            try {
+                const types = ['success', 'error', 'warning', 'info'];
+                types.forEach((type, index) => {
+                    setTimeout(() => {
+                        window.showThemedNotification(
+                            `Notification ${type} test`,
+                            type,
+                            2000
+                        );
+                    }, index * 600);
+                });
+                
+                addToResults('4 notifications test lancées', 'success');
+                addToResults('Les notifications apparaissent en haut à droite', 'info');
+                
+            } catch (error) {
+                addToResults(`Erreur test notifications: ${error.message}`, 'error');
+            }
+        }
+        
+        function showGalleryExample() {
+            clearResults();
+            addToResults('🖼️ Génération d\'exemple de galerie...', 'info');
+            
+            try {
+                const sampleImages = [
+                    {
+                        src: 'images/work-1.jpg',
+                        title: 'Projet Web',
+                        description: 'Site web moderne et responsive'
+                    },
+                    {
+                        src: 'images/work-2.jpg',
+                        title: 'App Mobile',
+                        description: 'Application mobile native'
+                    },
+                    {
+                        src: 'images/work-3.jpg',
+                        title: 'Branding',
+                        description: 'Identité visuelle complète'
+                    },
+                    {
+                        src: 'images/work-4.jpg',
+                        title: 'E-commerce',
+                        description: 'Boutique en ligne'
+                    }
+                ];
+                
+                const gallery = window.createThemedGallery(sampleImages);
+                if (gallery) {
+                    demoContent.innerHTML = `
+                        <h4>Galerie Thématisée</h4>
+                        ${gallery}
+                    `;
+                    showDemo();
+                    addToResults('Galerie générée avec succès', 'success');
+                    addToResults('Cliquez sur les images pour tester les interactions', 'info');
+                } else {
+                    addToResults('Échec génération galerie', 'error');
+                }
+                
+            } catch (error) {
+                addToResults(`Erreur galerie: ${error.message}`, 'error');
+            }
+        }
+        
+        // Fonction utilitaire pour déterminer si une couleur est claire
+        function isLightColor(color) {
+            const hex = color.replace('#', '');
+            const r = parseInt(hex.substr(0, 2), 16);
+            const g = parseInt(hex.substr(2, 2), 16);
+            const b = parseInt(hex.substr(4, 2), 16);
+            const brightness = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+            return brightness > 128;
+        }
+        
+        // Auto-test au chargement
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                addToResults('Page de test du thème chargée et prête', 'success');
+                console.log('=== PAGE DE TEST DU THÈME PRÊTE ===');
+                
+                // Test automatique d'accès
+                if (typeof window.getTheme === 'function') {
+                    addToResults('Fonctions de thème détectées', 'success');
+                } else {
+                    addToResults('Fonctions de thème non détectées', 'warning');
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

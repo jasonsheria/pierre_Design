@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Correction - Fonctions Globales</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; line-height: 1.6; }
+        .test { margin: 1rem 0; padding: 1rem; border-left: 4px solid #007bff; background: #f8f9fa; }
+        .success { border-left-color: #28a745; background: #d4edda; }
+        .error { border-left-color: #dc3545; background: #f8d7da; }
+        button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        code { background: #e9ecef; padding: 2px 4px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test Correction - Fonctions Globales</h1>
+    
+    <div id="results"></div>
+    
+    <div style="margin-top: 2rem;">
+        <button class="btn-primary" onclick="runTests()">🔄 Tester Fonctions</button>
+        <button class="btn-success" onclick="testPortfolio()">📁 Tester Portfolio</button>
+        <button class="btn-primary" onclick="testLanguages()">🌐 Tester Langues</button>
+    </div>
+
+    <script src="js/globalData.js"></script>
+    <script>
+        function runTests() {
+            const results = document.getElementById('results');
+            let html = '<h2>📊 Résultats des Tests</h2>';
+            
+            // Test des fonctions manquantes
+            const functionsToTest = [
+                'getGlobalData', 'getTheme', 'getTranslations', 'setSiteLanguage', 
+                'getPortfolio', 'saveToLocalStorage', 'loadFromLocalStorage'
+            ];
+            
+            functionsToTest.forEach(funcName => {
+                const isAvailable = typeof window[funcName] === 'function';
+                html += `<div class="test ${isAvailable ? 'success' : 'error'}">
+                    ${isAvailable ? '✅' : '❌'} <strong>${funcName}</strong>: 
+                    <code>${typeof window[funcName]}</code>
+                </div>`;
+            });
+            
+            results.innerHTML = html;
+            console.log('🔄 Tests des fonctions terminés');
+        }
+        
+        function testPortfolio() {
+            const results = document.getElementById('results');
+            let html = '<h2>📁 Test Portfolio</h2>';
+            
+            try {
+                const portfolio = window.getPortfolio();
+                if (portfolio && Array.isArray(portfolio)) {
+                    html += `<div class="test success">
+                        ✅ <strong>Portfolio chargé</strong>: ${portfolio.length} projets<br>
+                        Premier projet: <code>${portfolio[0]?.title || 'Aucun'}</code>
+                    </div>`;
+                    
+                    // Afficher quelques projets
+                    portfolio.slice(0, 3).forEach((project, index) => {
+                        html += `<div class="test">
+                            📋 <strong>Projet ${index + 1}</strong>: ${project.title}<br>
+                            Catégorie: <code>${project.category}</code> | 
+                            Statut: <code>${project.status}</code>
+                        </div>`;
+                    });
+                } else {
+                    html += `<div class="test error">
+                        ❌ <strong>Portfolio non disponible</strong>
+                    </div>`;
+                }
+            } catch (error) {
+                html += `<div class="test error">
+                    ❌ <strong>Erreur Portfolio</strong>: ${error.message}
+                </div>`;
+            }
+            
+            results.innerHTML = html;
+            console.log('📁 Test portfolio terminé');
+        }
+        
+        function testLanguages() {
+            const results = document.getElementById('results');
+            let html = '<h2>🌐 Test Langues</h2>';
+            
+            try {
+                const currentLang = window.getCurrentLanguage();
+                html += `<div class="test success">
+                    ✅ <strong>Langue courante</strong>: <code>${currentLang}</code>
+                </div>`;
+                
+                // Test changement de langue
+                const changed = window.setSiteLanguage('en');
+                const newLang = window.getCurrentLanguage();
+                html += `<div class="test ${changed ? 'success' : 'error'}">
+                    ${changed ? '✅' : '❌'} <strong>Changement vers EN</strong>: <code>${newLang}</code>
+                </div>`;
+                
+                // Remettre la langue originale
+                window.setSiteLanguage(currentLang);
+                
+                // Test traductions
+                const navigation = window.getTranslations('navigation');
+                if (navigation && Array.isArray(navigation)) {
+                    html += `<div class="test success">
+                        ✅ <strong>Traductions navigation</strong>: ${navigation.length} éléments
+                    </div>`;
+                } else {
+                    html += `<div class="test error">
+                        ❌ <strong>Traductions navigation</strong> non disponibles
+                    </div>`;
+                }
+                
+            } catch (error) {
+                html += `<div class="test error">
+                    ❌ <strong>Erreur test langues</strong>: ${error.message}
+                </div>`;
+            }
+            
+            results.innerHTML = html;
+            console.log('🌐 Test langues terminé');
+        }
+        
+        // Auto-test au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(runTests, 1000);
+        });
+    </script>
+</body>
+</html>

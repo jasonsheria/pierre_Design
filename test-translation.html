@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Traduction - Site Portfolio</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .test-results {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            border-left: 4px solid #007bff;
+        }
+        .success {
+            color: #28a745;
+        }
+        .error {
+            color: #dc3545;
+        }
+        .warning {
+            color: #ffc107;
+        }
+        .info {
+            color: #17a2b8;
+        }
+        .console-output {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Test du Système de Traduction</h1>
+        <p>Cette page permet de tester le fonctionnement du système de traduction automatique.</p>
+        
+        <div>
+            <h3>Tests de Base</h3>
+            <button class="test-button" onclick="runDiagnostic()">🔍 Diagnostic Complet</button>
+            <button class="test-button" onclick="runTranslationTest()">🧪 Test APIs</button>
+            <button class="test-button" onclick="translateToEnglish()">🇬🇧 Traduire en Anglais</button>
+            <button class="test-button" onclick="translateToFrench()">🇫🇷 Revenir au Français</button>
+        </div>
+        
+        <div>
+            <h3>Tests Avancés</h3>
+            <button class="test-button" onclick="runCompleteValidation()">🏆 Validation Complète</button>
+            <button class="test-button" onclick="testDictionary()">📚 Test Dictionnaire</button>
+            <button class="test-button" onclick="testGoogleAPI()">🌐 Test Google API</button>
+            <button class="test-button" onclick="testMyMemoryAPI()">🔄 Test MyMemory API</button>
+            <button class="test-button" onclick="clearCache()">🗑️ Vider Cache</button>
+        </div>
+        
+        <div class="test-results" id="test-results">
+            <strong>Résultats des tests :</strong>
+            <div id="results-content">Cliquez sur un bouton pour commencer les tests...</div>
+        </div>
+        
+        <div>
+            <h3>Console de Debug</h3>
+            <div class="console-output" id="console-output">
+                Console de debug - Les logs apparaîtront ici...
+            </div>
+        </div>
+    </div>
+
+    <!-- Éléments de test pour la traduction -->
+    <div class="test-container">
+        <h2>Éléments de Test</h2>
+        <p>Bonjour le monde ! Ceci est un paragraphe de test.</p>
+        <h3>Nos Services</h3>
+        <p>Nous offrons des services de construction et de rénovation.</p>
+        <button class="test-button">Demander un Devis</button>
+        <a href="#">Lire la Suite</a>
+        <input type="text" placeholder="Entrez votre nom">
+        <textarea placeholder="Votre message"></textarea>
+    </div>
+
+    <!-- Scripts nécessaires -->
+    <script src="js/translationDictionary.js"></script>
+    <script src="js/smartTranslator.js"></script>
+    <script src="js/validation.js"></script>
+    
+    <script>
+        // Rediriger les logs de la console vers notre interface
+        const originalLog = console.log;
+        const originalWarn = console.warn;
+        const originalError = console.error;
+        
+        const consoleOutput = document.getElementById('console-output');
+        const resultsContent = document.getElementById('results-content');
+        
+        function addToConsole(message, type = 'log') {
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#ff6b6b' : type === 'warn' ? '#ffd43b' : '#51cf66';
+            consoleOutput.innerHTML += `<div style="color: ${color}; margin-bottom: 5px;">
+                [${timestamp}] ${message}
+            </div>`;
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+        
+        function addToResults(message, type = 'info') {
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : type === 'warning' ? 'warning' : 'info';
+            resultsContent.innerHTML += `<div class="${className}">✓ ${message}</div>`;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToConsole(args.join(' '), 'log');
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addToConsole(args.join(' '), 'warn');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToConsole(args.join(' '), 'error');
+        };
+        
+        // Fonctions de test
+        function runDiagnostic() {
+            resultsContent.innerHTML = '<div class="info">🔍 Exécution du diagnostic...</div>';
+            try {
+                const elements = window.diagnoseTranslation();
+                addToResults(`Diagnostic terminé : ${elements.length} éléments trouvés`, 'success');
+            } catch (error) {
+                addToResults(`Erreur diagnostic : ${error.message}`, 'error');
+            }
+        }
+        
+        function runTranslationTest() {
+            resultsContent.innerHTML = '<div class="info">🧪 Test des APIs de traduction...</div>';
+            try {
+                window.testTranslation();
+                addToResults('Tests API lancés - voir console pour détails', 'success');
+            } catch (error) {
+                addToResults(`Erreur test API : ${error.message}`, 'error');
+            }
+        }
+        
+        async function translateToEnglish() {
+            resultsContent.innerHTML = '<div class="info">🇬🇧 Traduction vers l\'anglais...</div>';
+            try {
+                await window.smartTranslator.translatePage('en');
+                addToResults('Traduction vers l\'anglais terminée', 'success');
+            } catch (error) {
+                addToResults(`Erreur traduction anglais : ${error.message}`, 'error');
+            }
+        }
+        
+        async function translateToFrench() {
+            resultsContent.innerHTML = '<div class="info">🇫🇷 Retour au français...</div>';
+            try {
+                await window.smartTranslator.translatePage('fr');
+                addToResults('Retour au français terminé', 'success');
+            } catch (error) {
+                addToResults(`Erreur retour français : ${error.message}`, 'error');
+            }
+        }
+        
+        function testDictionary() {
+            resultsContent.innerHTML = '<div class="info">📚 Test du dictionnaire...</div>';
+            try {
+                const tests = [
+                    { fr: 'accueil', expected: 'Home' },
+                    { fr: 'services', expected: 'Services' },
+                    { fr: 'demander un devis', expected: 'Request A Quote' }
+                ];
+                
+                tests.forEach(test => {
+                    const result = window.smartTranslator.translateWithDictionary(test.fr, 'en');
+                    const success = result.toLowerCase() === test.expected.toLowerCase();
+                    addToResults(`${test.fr} -> ${result} ${success ? '✓' : '✗'}`, success ? 'success' : 'warning');
+                });
+                
+            } catch (error) {
+                addToResults(`Erreur test dictionnaire : ${error.message}`, 'error');
+            }
+        }
+        
+        async function testGoogleAPI() {
+            resultsContent.innerHTML = '<div class="info">🌐 Test Google Translate API...</div>';
+            try {
+                const result = await window.smartTranslator.tryGoogleTranslateAPI('Bonjour', 'en', 'fr');
+                addToResults(`Google API: "Bonjour" -> "${result || 'Échec'}"`, result ? 'success' : 'warning');
+            } catch (error) {
+                addToResults(`Erreur Google API : ${error.message}`, 'error');
+            }
+        }
+        
+        async function testMyMemoryAPI() {
+            resultsContent.innerHTML = '<div class="info">🔄 Test MyMemory API...</div>';
+            try {
+                const result = await window.smartTranslator.tryMyMemoryAPI('Bonjour', 'en', 'fr');
+                addToResults(`MyMemory API: "Bonjour" -> "${result || 'Échec'}"`, result ? 'success' : 'warning');
+            } catch (error) {
+                addToResults(`Erreur MyMemory API : ${error.message}`, 'error');
+            }
+        }
+        
+        async function runCompleteValidation() {
+            resultsContent.innerHTML = '<div class="info">🏆 Validation complète en cours...</div>';
+            try {
+                const result = await window.runValidation();
+                addToResults(`Validation complète ${result ? 'réussie' : 'échouée'} - voir console pour détails`, result ? 'success' : 'error');
+            } catch (error) {
+                addToResults(`Erreur validation complète : ${error.message}`, 'error');
+            }
+        }
+        
+        function clearCache() {
+            try {
+                localStorage.removeItem('translationCache');
+                window.smartTranslator.cache.clear();
+                addToResults('Cache vidé avec succès', 'success');
+            } catch (error) {
+                addToResults(`Erreur vidage cache : ${error.message}`, 'error');
+            }
+        }
+        
+        // Attendre que le smartTranslator soit prêt
+        window.addEventListener('load', function() {
+            addToResults('Page de test chargée et prête', 'success');
+            addToConsole('=== PAGE DE TEST DE TRADUCTION INITIALISÉE ===');
+        });
+    </script>
+</body>
+</html>

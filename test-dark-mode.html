@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Mode Sombre</title>
+    
+    <!-- CSS Bootstrap et styles -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,600,700,800,900" rel="stylesheet">
+    <link rel="stylesheet" href="css/open-iconic-bootstrap.min.css">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="css/magnific-popup.css">
+    <link rel="stylesheet" href="css/aos.css">
+    <link rel="stylesheet" href="css/ionicons.min.css">
+    <link rel="stylesheet" href="css/flaticon.css">
+    <link rel="stylesheet" href="css/icomoon.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/theme-enhanced.css">
+    
+    <style>
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .btn-toggle {
+            margin: 5px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .btn-light {
+            background: #f8f9fa;
+            color: #212529;
+        }
+        .btn-dark {
+            background: #0f172a;
+            color: #ffffff;
+        }
+        .content-sample {
+            margin: 30px 0;
+        }
+        .card-sample {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Container -->
+    <div id="navigation"><!-- Navigation will be loaded here --></div>
+    
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <div><strong>🎨 Test Thème</strong></div>
+        <button class="btn-toggle btn-light" onclick="setThemeMode('default')">☀️ Clair</button>
+        <button class="btn-toggle btn-dark" onclick="setThemeMode('dark')">🌙 Sombre</button>
+        <div style="margin-top: 10px; font-size: 12px;">
+            <div id="themeStatus">Chargement...</div>
+        </div>
+    </div>
+    
+    <div class="container" style="padding-top: 120px;">
+        <section class="ftco-section">
+            <h1>🌙 Test du Mode Sombre</h1>
+            <p class="lead">Cette page teste l'application correcte du mode sombre avec texte blanc et fond noir.</p>
+            
+            <!-- Section de test avec différents éléments -->
+            <div class="test-section bg-light">
+                <h2>🧪 Section de Test</h2>
+                <p>Ce texte devrait être <strong>blanc</strong> en mode sombre et <em>noir</em> en mode clair.</p>
+                
+                <div class="content-sample">
+                    <h3>Titres et Paragraphes</h3>
+                    <h4>Titre H4</h4>
+                    <h5>Titre H5</h5>
+                    <h6>Titre H6</h6>
+                    <p>Paragraphe normal avec du texte qui doit être visible.</p>
+                    <p class="text-muted">Texte muted qui doit rester lisible.</p>
+                </div>
+                
+                <div class="content-sample">
+                    <h3>Boutons</h3>
+                    <button class="btn btn-primary">Bouton Primaire</button>
+                    <button class="btn btn-secondary">Bouton Secondaire</button>
+                    <button class="btn btn-outline-primary">Bouton Outline</button>
+                </div>
+                
+                <div class="content-sample">
+                    <h3>Liens</h3>
+                    <p>
+                        <a href="#">Lien normal</a> | 
+                        <a href="#" class="text-primary">Lien primaire</a> | 
+                        <a href="#" class="text-muted">Lien muted</a>
+                    </p>
+                </div>
+                
+                <div class="content-sample">
+                    <h3>Formulaires</h3>
+                    <div class="form-group">
+                        <label for="testInput">Champ de test:</label>
+                        <input type="text" class="form-control" id="testInput" placeholder="Tapez quelque chose...">
+                    </div>
+                    <div class="form-group">
+                        <label for="testTextarea">Zone de texte:</label>
+                        <textarea class="form-control" id="testTextarea" rows="3" placeholder="Votre message..."></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Cards -->
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card-sample">
+                        <h4>Card 1</h4>
+                        <p>Contenu de la première card.</p>
+                        <button class="btn btn-primary btn-sm">Action</button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card-sample bg-white">
+                        <h4>Card 2</h4>
+                        <p>Contenu de la deuxième card avec bg-white.</p>
+                        <button class="btn btn-outline-primary btn-sm">Action</button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card-sample bg-light">
+                        <h4>Card 3</h4>
+                        <p>Contenu de la troisième card avec bg-light.</p>
+                        <button class="btn btn-secondary btn-sm">Action</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Liste -->
+            <div class="content-sample">
+                <h3>Listes</h3>
+                <ul>
+                    <li>Premier élément de liste</li>
+                    <li>Deuxième élément de liste</li>
+                    <li>Troisième élément de liste avec <a href="#">un lien</a></li>
+                </ul>
+                
+                <ol>
+                    <li>Premier élément numéroté</li>
+                    <li>Deuxième élément numéroté</li>
+                    <li>Troisième élément numéroté</li>
+                </ol>
+            </div>
+            
+            <!-- Table -->
+            <div class="content-sample">
+                <h3>Tableau</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Colonne 1</th>
+                            <th>Colonne 2</th>
+                            <th>Colonne 3</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Donnée 1</td>
+                            <td>Donnée 2</td>
+                            <td>Donnée 3</td>
+                        </tr>
+                        <tr>
+                            <td>Donnée 4</td>
+                            <td>Donnée 5</td>
+                            <td>Donnée 6</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    
+    <!-- Footer Container -->
+    <div id="ftco-footer"><!-- Footer will be loaded here --></div>
+    
+    <!-- Scripts dans le bon ordre -->
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/jquery-migrate-3.0.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/globalData.js"></script>
+    <script src="js/translationDictionary.js"></script>
+    <script src="js/smartTranslator.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/theme-controller.js"></script>
+    
+    <script>
+        let currentMode = 'default';
+        
+        // Attendre que globalData soit prêt
+        document.addEventListener('globalDataReady', function() {
+            console.log('🟢 Événement globalDataReady reçu');
+            initDarkModeTest();
+        });
+
+        // Fallback
+        setTimeout(() => {
+            if (typeof window.getGlobalData !== 'function') {
+                console.log('🔄 Démarrage en mode fallback');
+                initDarkModeTest();
+            }
+        }, 1000);
+
+        function initDarkModeTest() {
+            // Charger navigation et footer
+            if (typeof window.loadNavigation === 'function') {
+                window.loadNavigation();
+            }
+            if (typeof window.loadFooter === 'function') {
+                window.loadFooter();
+            }
+            
+            // Écouter les changements de thème
+            window.addEventListener('themeChanged', function(event) {
+                console.log('🎨 Thème changé:', event.detail.theme);
+                updateStatus();
+            });
+            
+            // Mise à jour initiale
+            updateStatus();
+            
+            console.log('✅ Test mode sombre initialisé');
+        }
+        
+        function setThemeMode(mode) {
+            console.log('🔄 Changement vers le mode:', mode);
+            
+            if (typeof window.setTheme === 'function') {
+                const success = window.setTheme(mode);
+                if (success) {
+                    currentMode = mode;
+                    updateStatus();
+                    console.log('✅ Mode', mode, 'appliqué');
+                } else {
+                    console.error('❌ Erreur lors de l\'application du mode', mode);
+                }
+            } else {
+                console.error('❌ Fonction setTheme non disponible');
+            }
+        }
+        
+        function updateStatus() {
+            const theme = typeof window.getTheme === 'function' ? window.getTheme() : null;
+            const statusElement = document.getElementById('themeStatus');
+            
+            if (theme) {
+                const isDark = theme.name === 'Mode sombre';
+                statusElement.innerHTML = `
+                    <div>📊 ${theme.name}</div>
+                    <div style="color: ${isDark ? '#f59e0b' : '#28a745'};">
+                        ${isDark ? '🌙 Mode sombre actif' : '☀️ Mode clair actif'}
+                    </div>
+                `;
+            } else {
+                statusElement.innerHTML = '<div style="color: #dc3545;">❌ Thème non disponible</div>';
+            }
+        }
+        
+        // Test automatique au chargement
+        setTimeout(() => {
+            console.log('🧪 Test automatique du mode sombre...');
+            setThemeMode('dark');
+        }, 2000);
+    </script>
+</body>
+</html>

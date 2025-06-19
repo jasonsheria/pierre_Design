@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Passage Mode Sombre vers Mode Clair</title>
+    
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/theme-enhanced.css">
+    <link rel="stylesheet" href="css/chatbot.css">
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .test-header {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #1683fb, #ff9800);
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .test-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        
+        .test-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .btn-dark {
+            background: #0f172a;
+            color: #ffffff;
+        }
+        
+        .btn-dark:hover {
+            background: #1e293b;
+            transform: translateY(-2px);
+        }
+        
+        .btn-light {
+            background: #1683fb;
+            color: #ffffff;
+        }
+        
+        .btn-light:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+        
+        .btn-reset {
+            background: #dc3545;
+            color: #ffffff;
+        }
+        
+        .btn-reset:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        
+        .test-elements {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .element-card {
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+        }
+        
+        .element-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--theme-primary, #1683fb);
+        }
+        
+        .log-container {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 2px 0;
+        }
+        
+        .log-info { color: #0066cc; }
+        .log-success { color: #28a745; }
+        .log-warning { color: #ffc107; }
+        .log-error { color: #dc3545; }
+        
+        /* Chatbot de test */
+        .test-chatbot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            height: 400px;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+        
+        .chatbot-header {
+            padding: 15px;
+            background: var(--theme-primary, #1683fb);
+            color: white;
+            border-radius: 12px 12px 0 0;
+            font-weight: 600;
+        }
+        
+        .chatbot-body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: white;
+        }
+        
+        .chatbot-message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+        
+        .chatbot-message.user {
+            background: var(--theme-primary, #1683fb);
+            color: white;
+            margin-left: auto;
+        }
+        
+        .chatbot-message.bot {
+            background: #f8f9fa;
+            color: #212529;
+        }
+        
+        .chatbot-input-area {
+            padding: 15px;
+            border-top: 1px solid #dee2e6;
+            background: white;
+            border-radius: 0 0 12px 12px;
+        }
+        
+        .chatbot-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .chatbot-button {
+            margin-top: 8px;
+            padding: 6px 12px;
+            background: var(--theme-primary, #1683fb);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Scripts -->
+    <script src="js/globalData.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/theme-controller.js"></script>
+    
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🌗 Test - Passage Mode Sombre ↔ Mode Clair</h1>
+            <p>Vérification de la bonne réinitialisation des styles lors du changement de thème</p>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎮 Contrôles de Test</h3>
+            <div class="test-controls">
+                <button class="test-btn btn-dark" onclick="testDarkMode()">🌙 Activer Mode Sombre</button>
+                <button class="test-btn btn-light" onclick="testLightMode()">☀️ Activer Mode Clair</button>
+                <button class="test-btn btn-reset" onclick="resetPage()">🔄 Réinitialiser Page</button>
+                <button class="test-btn" style="background: #28a745; color: white;" onclick="runFullTest()">🧪 Test Complet</button>
+            </div>
+            
+            <div class="test-instructions">
+                <h4>📋 Instructions de Test</h4>
+                <ol>
+                    <li><strong>Activez le mode sombre</strong> - Vérifiez que tout devient sombre</li>
+                    <li><strong>Activez le mode clair</strong> - Vérifiez la réinitialisation complète</li>
+                    <li><strong>Répétez plusieurs fois</strong> pour détecter les problèmes de persistance</li>
+                    <li><strong>Testez le chatbot</strong> (coin inférieur droit) dans les deux modes</li>
+                    <li><strong>Vérifiez les formulaires</strong> et les éléments interactifs</li>
+                </ol>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🧪 Éléments de Test</h3>
+            <div class="test-elements">
+                <div class="element-card">
+                    <div class="element-title">Texte Standard</div>
+                    <p>Ceci est un paragraphe de test avec du <strong>texte en gras</strong> et du <em>texte en italique</em>.</p>
+                    <span class="text-muted">Texte en gris (muted)</span><br>
+                    <span class="text-dark">Texte sombre</span><br>
+                    <span class="text-primary">Texte primaire</span>
+                </div>
+                
+                <div class="element-card bg-light">
+                    <div class="element-title">Fond Clair</div>
+                    <p>Cette carte a un fond clair (.bg-light)</p>
+                    <div class="bg-white p-2 rounded">
+                        <small>Zone avec fond blanc (.bg-white)</small>
+                    </div>
+                </div>
+                
+                <div class="element-card">
+                    <div class="element-title">Formulaire</div>
+                    <div class="form-group">
+                        <label>Nom :</label>
+                        <input type="text" class="form-control" placeholder="Votre nom">
+                    </div>
+                    <div class="form-group">
+                        <label>Email :</label>
+                        <input type="email" class="form-control" placeholder="votre@email.com">
+                    </div>
+                    <button class="btn btn-primary">Envoyer</button>
+                </div>
+                
+                <div class="element-card">
+                    <div class="element-title">Liens</div>
+                    <p>
+                        <a href="#" onclick="return false;">Lien normal</a><br>
+                        <a href="#" class="text-primary" onclick="return false;">Lien primaire</a><br>
+                        <a href="#" class="text-secondary" onclick="return false;">Lien secondaire</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 Journal des Tests</h3>
+            <div class="log-container" id="test-log">
+                <div class="log-entry log-info">📋 Prêt pour les tests...</div>
+            </div>
+            <button class="test-btn" style="background: #6c757d; color: white; margin-top: 10px;" onclick="clearLog()">🗑️ Vider le Journal</button>
+        </div>
+    </div>
+    
+    <!-- Chatbot de test -->
+    <div class="test-chatbot chatbot-widget">
+        <div class="chatbot-header">
+            💬 Chatbot Test
+        </div>
+        <div class="chatbot-body">
+            <div class="chatbot-message bot">
+                Bonjour ! Je suis un chatbot de test. Testez-moi dans les différents thèmes !
+            </div>
+            <div class="chatbot-message user">
+                Salut ! Comment ça va ?
+            </div>
+            <div class="chatbot-message bot">
+                Ça va bien ! Les thèmes changent-ils correctement ?
+            </div>
+        </div>
+        <div class="chatbot-input-area">
+            <input type="text" class="chatbot-input" placeholder="Tapez votre message...">
+            <button class="chatbot-button">Envoyer</button>
+        </div>
+    </div>
+    
+    <script>
+        let testCount = 0;
+        
+        // Fonction de logging
+        function log(message, type = 'info') {
+            const logContainer = document.getElementById('test-log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            console.log(`[TEST] ${message}`);
+        }
+        
+        // Test mode sombre
+        function testDarkMode() {
+            log('🌙 Test mode sombre...', 'info');
+            if (typeof window.setTheme === 'function') {
+                const success = window.setTheme('dark');
+                if (success) {
+                    log('✅ Mode sombre activé', 'success');
+                    setTimeout(() => {
+                        validateDarkMode();
+                    }, 500);
+                } else {
+                    log('❌ Échec activation mode sombre', 'error');
+                }
+            } else {
+                log('❌ Fonction setTheme non trouvée', 'error');
+            }
+        }
+        
+        // Test mode clair
+        function testLightMode() {
+            log('☀️ Test mode clair...', 'info');
+            if (typeof window.setTheme === 'function') {
+                const success = window.setTheme('default');
+                if (success) {
+                    log('✅ Mode clair activé', 'success');
+                    setTimeout(() => {
+                        validateLightMode();
+                    }, 500);
+                } else {
+                    log('❌ Échec activation mode clair', 'error');
+                }
+            } else {
+                log('❌ Fonction setTheme non trouvée', 'error');
+            }
+        }
+        
+        // Validation mode sombre
+        function validateDarkMode() {
+            const bodyBg = window.getComputedStyle(document.body).backgroundColor;
+            const bodyColor = window.getComputedStyle(document.body).color;
+            
+            if (bodyBg.includes('0, 0, 0') || bodyBg === 'rgb(0, 0, 0)') {
+                log('✅ Fond du body : noir OK', 'success');
+            } else {
+                log(`⚠️ Fond du body : ${bodyBg} (attendu: noir)`, 'warning');
+            }
+            
+            if (bodyColor.includes('255, 255, 255') || bodyColor === 'rgb(255, 255, 255)') {
+                log('✅ Texte du body : blanc OK', 'success');
+            } else {
+                log(`⚠️ Texte du body : ${bodyColor} (attendu: blanc)`, 'warning');
+            }
+            
+            // Vérifier le chatbot
+            const chatbot = document.querySelector('.chatbot-widget');
+            if (chatbot) {
+                const chatbotBg = window.getComputedStyle(chatbot).backgroundColor;
+                log(`💬 Chatbot background: ${chatbotBg}`, 'info');
+            }
+        }
+        
+        // Validation mode clair
+        function validateLightMode() {
+            const bodyBg = window.getComputedStyle(document.body).backgroundColor;
+            const bodyColor = window.getComputedStyle(document.body).color;
+            
+            if (bodyBg.includes('255, 255, 255') || bodyBg === 'rgb(255, 255, 255)' || bodyBg === 'rgba(0, 0, 0, 0)') {
+                log('✅ Fond du body : blanc/transparent OK', 'success');
+            } else {
+                log(`⚠️ Fond du body : ${bodyBg} (attendu: blanc)`, 'warning');
+            }
+            
+            if (bodyColor.includes('33, 37, 41') || bodyColor.includes('32, 41, 29') || bodyColor === 'rgb(33, 37, 41)') {
+                log('✅ Texte du body : sombre OK', 'success');
+            } else {
+                log(`⚠️ Texte du body : ${bodyColor} (attendu: sombre)`, 'warning');
+            }
+            
+            // Vérifier le chatbot
+            const chatbot = document.querySelector('.chatbot-widget');
+            if (chatbot) {
+                const chatbotBg = window.getComputedStyle(chatbot).backgroundColor;
+                log(`💬 Chatbot background: ${chatbotBg}`, 'info');
+            }
+        }
+        
+        // Test complet
+        function runFullTest() {
+            testCount++;
+            log(`🧪 === DÉBUT TEST COMPLET #${testCount} ===`, 'info');
+            
+            // Séquence de test
+            setTimeout(() => testDarkMode(), 100);
+            setTimeout(() => testLightMode(), 2000);
+            setTimeout(() => testDarkMode(), 4000);
+            setTimeout(() => testLightMode(), 6000);
+            setTimeout(() => {
+                log(`✅ === FIN TEST COMPLET #${testCount} ===`, 'success');
+            }, 8000);
+        }
+        
+        // Réinitialiser la page
+        function resetPage() {
+            log('🔄 Réinitialisation de la page...', 'info');
+            location.reload();
+        }
+        
+        // Vider le journal
+        function clearLog() {
+            const logContainer = document.getElementById('test-log');
+            logContainer.innerHTML = '<div class="log-entry log-info">📋 Journal vidé...</div>';
+        }
+        
+        // Initialisation
+        window.addEventListener('load', function() {
+            log('🚀 Page de test chargée', 'success');
+            log('💡 Utilisez les boutons pour tester les thèmes', 'info');
+            
+            // Vérifier les fonctions disponibles
+            if (typeof window.setTheme === 'function') {
+                log('✅ Fonction setTheme disponible', 'success');
+            } else {
+                log('❌ Fonction setTheme non trouvée', 'error');
+            }
+            
+            if (typeof window.getTheme === 'function') {
+                log('✅ Fonction getTheme disponible', 'success');
+            } else {
+                log('❌ Fonction getTheme non trouvée', 'error');
+            }
+        });
+        
+        // Écouter les changements de thème
+        window.addEventListener('themeChanged', function(event) {
+            log(`🎨 Thème changé: ${event.detail.theme.name || 'Thème personnalisé'}`, 'info');
+        });
+    </script>
+</body>
+</html>

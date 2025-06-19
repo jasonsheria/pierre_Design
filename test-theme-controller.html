@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Contrôleur de Thème</title>
+    
+    <!-- Styles CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/theme-enhanced.css">
+    <link rel="stylesheet" href="css/icomoon.css">
+    
+    <style>
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, var(--theme-primary, #1683fb), var(--theme-accent1, #ff9800));
+            color: white;
+            border-radius: 10px;
+        }
+        
+        .test-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 2px solid var(--theme-primary, #1683fb);
+            border-radius: 10px;
+            background: white;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .test-card {
+            padding: 20px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background: var(--theme-bg-light, #f8f9fa);
+        }
+        
+        .test-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: var(--theme-primary, #1683fb);
+            color: white;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .instructions {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--theme-primary, #1683fb);
+        }
+        
+        .instructions h3 {
+            color: var(--theme-primary, #1683fb);
+            margin-bottom: 15px;
+        }
+        
+        .instructions ul {
+            margin-bottom: 0;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-success { background: #28a745; }
+        .status-warning { background: #ffc107; }
+        .status-error { background: #dc3545; }
+        
+        .demo-elements {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .demo-element {
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: 1px solid var(--theme-primary, #1683fb);
+            background: white;
+            color: var(--theme-text-primary, #212529);
+        }
+        
+        .navigation-placeholder {
+            height: 80px;
+            background: var(--theme-navbar-bg, #1683fb);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Scripts d'initialisation -->
+    <script src="js/globalData.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/theme-controller.js"></script>
+    
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🎨 Test du Contrôleur de Thème</h1>
+            <p>Validation de l'affichage et du fonctionnement du sélecteur de thème</p>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 Instructions de Test</h3>
+            <ul>
+                <li><strong>Contrôleur de thème :</strong> Regardez à droite de l'écran, vous devriez voir un bouton "Thèmes" flottant</li>
+                <li><strong>Cliquez sur ce bouton</strong> pour ouvrir le panneau de sélection de thème</li>
+                <li><strong>Testez les thèmes prédéfinis :</strong> Défaut, Sombre, Nature, Coucher de soleil, Océan</li>
+                <li><strong>Testez les couleurs personnalisées</strong> avec les sélecteurs de couleur</li>
+                <li><strong>Vérifiez que les changements</strong> s'appliquent instantanément à tous les éléments</li>
+                <li><strong>Testez la persistance :</strong> Rechargez la page et vérifiez que le thème est conservé</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <h2>📊 État du Système</h2>
+            <div class="test-grid">
+                <div class="test-card">
+                    <h4>Contrôleur de Thème</h4>
+                    <p id="controller-status">
+                        <span class="status-indicator status-warning"></span>
+                        Vérification en cours...
+                    </p>
+                </div>
+                <div class="test-card">
+                    <h4>Thème Actuel</h4>
+                    <p id="current-theme">
+                        <span class="status-indicator status-warning"></span>
+                        Chargement...
+                    </p>
+                </div>
+                <div class="test-card">
+                    <h4>Persistance</h4>
+                    <p id="persistence-status">
+                        <span class="status-indicator status-warning"></span>
+                        Vérification...
+                    </p>
+                </div>
+                <div class="test-card">
+                    <h4>Fonction setTheme</h4>
+                    <p id="settheme-status">
+                        <span class="status-indicator status-warning"></span>
+                        Test en cours...
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🎯 Éléments de Démonstration</h2>
+            <div class="navigation-placeholder">
+                Navigation (Couleur de fond basée sur le thème)
+            </div>
+            
+            <div class="demo-elements">
+                <div class="demo-element">Élément avec bordure thématique</div>
+                <div class="demo-element">Texte avec couleur thématique</div>
+                <div class="demo-element">Autre élément de démonstration</div>
+            </div>
+            
+            <div class="test-grid" style="margin-top: 20px;">
+                <div class="test-card">
+                    <h4>Boutons de Test</h4>
+                    <button class="test-button" onclick="testThemeChange('default')">Thème Défaut</button>
+                    <button class="test-button" onclick="testThemeChange('dark')">Mode Sombre</button>
+                    <button class="test-button" onclick="testThemeChange('nature')">Thème Nature</button>
+                </div>
+                <div class="test-card">
+                    <h4>Tests Programmatiques</h4>
+                    <button class="test-button" onclick="testCustomColor()">Test Couleur Custom</button>
+                    <button class="test-button" onclick="testLocalStorage()">Test Persistance</button>
+                    <button class="test-button" onclick="refreshStatus()">Actualiser État</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>📝 Journal des Tests</h2>
+            <div id="test-log" style="background: #f8f9fa; padding: 15px; border-radius: 5px; font-family: monospace; max-height: 300px; overflow-y: auto;">
+                <div>Initialisation des tests...</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Fonctions de test
+        function log(message) {
+            const logDiv = document.getElementById('test-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function updateStatus(elementId, message, status = 'success') {
+            const element = document.getElementById(elementId);
+            const statusClass = `status-${status}`;
+            element.innerHTML = `<span class="status-indicator ${statusClass}"></span>${message}`;
+        }
+        
+        function testThemeChange(themeKey) {
+            log(`Test changement de thème vers: ${themeKey}`);
+            if (typeof window.setTheme === 'function') {
+                const success = window.setTheme(themeKey);
+                if (success) {
+                    log(`✅ Thème "${themeKey}" appliqué avec succès`);
+                } else {
+                    log(`❌ Échec de l'application du thème "${themeKey}"`);
+                }
+            } else {
+                log(`❌ Fonction setTheme non disponible`);
+            }
+            refreshStatus();
+        }
+        
+        function testCustomColor() {
+            log('Test couleur personnalisée');
+            if (typeof window.updateTheme === 'function') {
+                window.updateTheme('colors', { primary: '#e91e63' });
+                log('✅ Couleur personnalisée appliquée');
+            } else {
+                log('❌ Fonction updateTheme non disponible');
+            }
+            refreshStatus();
+        }
+        
+        function testLocalStorage() {
+            log('Test persistance localStorage');
+            const stored = localStorage.getItem('globalTheme');
+            if (stored) {
+                log(`✅ Thème stocké: ${stored.substring(0, 50)}...`);
+            } else {
+                log('⚠️ Aucun thème stocké dans localStorage');
+            }
+        }
+        
+        function refreshStatus() {
+            // Vérifier le contrôleur
+            const controller = document.getElementById('theme-controller');
+            if (controller) {
+                updateStatus('controller-status', 'Contrôleur trouvé et visible', 'success');
+            } else {
+                updateStatus('controller-status', 'Contrôleur introuvable', 'error');
+            }
+            
+            // Vérifier le thème actuel
+            if (typeof window.getTheme === 'function') {
+                const theme = window.getTheme();
+                const themeName = theme?.name || 'Inconnu';
+                updateStatus('current-theme', `Thème: ${themeName}`, 'success');
+            } else {
+                updateStatus('current-theme', 'Fonction getTheme indisponible', 'error');
+            }
+            
+            // Vérifier la persistance
+            const stored = localStorage.getItem('globalTheme');
+            if (stored) {
+                updateStatus('persistence-status', 'Thème sauvegardé', 'success');
+            } else {
+                updateStatus('persistence-status', 'Pas de sauvegarde', 'warning');
+            }
+            
+            // Vérifier setTheme
+            if (typeof window.setTheme === 'function') {
+                updateStatus('settheme-status', 'Fonction disponible', 'success');
+            } else {
+                updateStatus('settheme-status', 'Fonction indisponible', 'error');
+            }
+        }
+        
+        // Initialisation
+        window.addEventListener('load', function() {
+            log('🚀 Initialisation de la page de test');
+            
+            // Attendre que le contrôleur soit créé
+            setTimeout(() => {
+                refreshStatus();
+                
+                // Test d'existence du contrôleur
+                const controller = document.getElementById('theme-controller');
+                if (controller) {
+                    log('✅ Contrôleur de thème détecté');
+                    log('👉 Cliquez sur le bouton "Thèmes" à droite pour l\'ouvrir');
+                } else {
+                    log('❌ Contrôleur de thème non détecté');
+                }
+                
+                // Test des fonctions globales
+                const functions = ['getTheme', 'setTheme', 'updateTheme', 'toggleThemeController'];
+                functions.forEach(func => {
+                    if (typeof window[func] === 'function') {
+                        log(`✅ Fonction ${func} disponible`);
+                    } else {
+                        log(`❌ Fonction ${func} indisponible`);
+                    }
+                });
+                
+            }, 1000);
+        });
+        
+        // Rendre les fonctions accessibles
+        window.testThemeChange = testThemeChange;
+        window.testCustomColor = testCustomColor;
+        window.testLocalStorage = testLocalStorage;
+        window.refreshStatus = refreshStatus;
+    </script>
+</body>
+</html>

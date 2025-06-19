@@ -116,19 +116,19 @@
       <div class="container">
         <div class="row no-gutters d-flex align-items-center align-items-stretch" style="justify-content: space-between;">
           <div class="col-md-4 d-flex align-items-center py-4">
-            <a class="navbar-brand" href="index.html"><span class="flaticon-bee mr-1"></span>PDesign.</a>
+            <a class="navbar-brand" href="index.html" style="color: ${textColor};"><span class="flaticon-bee mr-1" style="color: ${textColor};"></span>PDesign.</a>
           </div>
           <div class="col-lg-6 d-block">
             <div class="row d-flex">              <div class="col-md d-flex topper align-items-center align-items-stretch py-md-4">
                 <div class="icon d-flex justify-content-center align-items-center"><span class="icon-paper-plane"></span></div>
                 <div class="text d-flex align-items-center">
-                  <span>${globalData?.author?.email || 'info@pdesign.com'}</span>
+                  <span>${globalData?.user?.email || 'info@pdesign.com'}</span>
                 </div>
               </div>
               <div class="col-md d-flex topper align-items-center align-items-stretch py-md-4">
                 <div class="icon d-flex justify-content-center align-items-center"><span class="icon-phone2"></span></div>
                 <div class="text d-flex align-items-center">
-                  <span>Call Us: +243 ${globalData?.author?.telephone || '123456789'}</span>
+                  <span>Call Us: +243 ${globalData?.user?.telephone || '123456789'}</span>
                 </div>
               </div>
             </div>

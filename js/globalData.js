@@ -1,3 +1,49 @@
+// ===== CONFIGURATION GLOBALE DU SERVEUR =====
+// Variable globale pour l'URL du serveur (peut être modifiée selon l'environnement)
+window.SERVER_BASE_URL = window.SERVER_BASE_URL || 'http://localhost:5000';
+
+// Configuration des endpoints du serveur
+window.SERVER_ENDPOINTS = window.SERVER_ENDPOINTS || {
+    base: window.SERVER_BASE_URL,
+    api: window.SERVER_BASE_URL + '/api',
+    uploads: window.SERVER_BASE_URL + '/uploads',
+    portfolio: window.SERVER_BASE_URL + '/uploads/portfolio',
+    siteDetails: window.SERVER_BASE_URL + '/site/details'
+};
+
+// Fonction utilitaire pour construire des URLs serveur
+window.buildServerUrl = window.buildServerUrl || function(endpoint, path = '') {
+    if (window.SERVER_ENDPOINTS[endpoint]) {
+        return path ? `${window.SERVER_ENDPOINTS[endpoint]}/${path}` : window.SERVER_ENDPOINTS[endpoint];
+    }
+    return `${window.SERVER_BASE_URL}/${endpoint}${path ? '/' + path : ''}`;
+};
+
+// Fonction pour mettre à jour l'URL du serveur (utile pour changer d'environnement)
+window.setServerBaseUrl = function(newUrl) {
+    console.log(`🔄 Changement d'URL serveur: ${window.SERVER_BASE_URL} → ${newUrl}`);
+    window.SERVER_BASE_URL = newUrl;
+    
+    // Mettre à jour tous les endpoints
+    window.SERVER_ENDPOINTS = {
+        base: newUrl,
+        api: newUrl + '/api',
+        uploads: newUrl + '/uploads',
+        portfolio: newUrl + '/uploads/portfolio',
+        siteDetails: newUrl + '/site/details'
+    };
+    
+    console.log('✅ Configuration serveur mise à jour:', {
+        baseUrl: window.SERVER_BASE_URL,
+        endpoints: window.SERVER_ENDPOINTS
+    });
+};
+
+console.log('[GlobalData] 🌍 Configuration serveur initialisée:', {
+    baseUrl: window.SERVER_BASE_URL,
+    endpoints: window.SERVER_ENDPOINTS
+});
+
 // Objet global pour stocker toutes les données du site
 window.globalData = window.globalData || {};
 
@@ -1515,11 +1561,455 @@ function forceResetElementsFromDarkMode() {
                 element.style.color = '';
             }
         });
-        
-        console.log('[forceResetElementsFromDarkMode] Réinitialisation terminée');
+          console.log('[forceResetElementsFromDarkMode] Réinitialisation terminée');
     } catch (error) {
         console.error('[forceResetElementsFromDarkMode] Erreur:', error);
     }
 }
+
+// Fonction pour récupérer des données depuis une URL et les fusionner avec GlobalData
+// Si baseUrl n'est pas fourni, utilise la variable globale SERVER_BASE_URL
+window.fetchAndMergeGlobalData = async function(baseUrl = null, siteId = 'demo-11') {
+    try {
+        // Utiliser la variable globale si baseUrl n'est pas fourni
+        const serverUrl = baseUrl || window.SERVER_BASE_URL;
+        const url = `${serverUrl}/site/details/${siteId}`;
+        console.log(`[fetchAndMergeGlobalData] Requête vers: ${url} (serveur configuré: ${window.SERVER_BASE_URL})`);
+        
+        // Envoyer la requête HTTP
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            // Ajouter des options pour gérer CORS si nécessaire
+            mode: 'cors',
+            credentials: 'same-origin'
+        });
+        
+        // Vérifier si la requête a réussi
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP: ${response.status} - ${response.statusText}`);
+        }
+        
+        // Récupérer les données JSON
+        const fetchedData = await response.json();
+        console.log('[fetchAndMergeGlobalData] Données récupérées:', fetchedData);
+        
+        // Vérifier si les données existent
+        if (!fetchedData || typeof fetchedData !== 'object') {
+            console.warn('[fetchAndMergeGlobalData] Données invalides ou vides reçues');
+            return false;
+        }
+        
+        // Fusionner les données avec GlobalData (ne remplace que les valeurs non-null)
+        const mergedData = mergeDataWithGlobalData(fetchedData);
+        
+        // Mettre à jour GlobalData
+        window.globalData = mergedData;
+        
+        // Sauvegarder dans localStorage si la fonction existe
+        if (typeof window.saveToLocalStorage === 'function') {
+            window.saveToLocalStorage('globalData', window.globalData);
+        }
+        
+        // Déclencher un événement pour notifier le changement
+        const event = new CustomEvent('globalDataUpdated', {
+            detail: { 
+                source: 'remote',
+                url: url,
+                data: fetchedData 
+            }
+        });
+        window.dispatchEvent(event);
+        
+        console.log('[fetchAndMergeGlobalData] GlobalData mis à jour avec succès');
+        return true;
+        
+    } catch (error) {
+        console.error('[fetchAndMergeGlobalData] Erreur lors de la récupération:', error);
+        
+        // Déclencher un événement d'erreur
+        const errorEvent = new CustomEvent('globalDataUpdateError', {
+            detail: { 
+                error: error.message,
+                url: `${baseUrl}/site/details/${siteId}`
+            }
+        });
+        window.dispatchEvent(errorEvent);
+        
+        return false;
+    }
+};
+
+// Fonction helper pour fusionner les données en gardant les valeurs existantes si les nouvelles sont null
+function mergeDataWithGlobalData(newData) {
+    try {
+        console.log('[mergeDataWithGlobalData] Fusion des données...');
+        console.log('[mergeDataWithGlobalData] Données reçues:', newData);
+        
+        // Créer une copie profonde de GlobalData existant
+        const currentData = JSON.parse(JSON.stringify(window.globalData));
+        
+        // Traitement spécial pour la nouvelle structure GlobalData du serveur
+        if (newData && typeof newData === 'object' && newData.GlobalData && Array.isArray(newData.GlobalData)) {
+            console.log('[mergeDataWithGlobalData] Traitement de la structure GlobalData du serveur');
+            console.log('[mergeDataWithGlobalData] Structure détectée:', newData.GlobalData);
+            
+            const [site, user, template, posts, portfolio, messages] = newData.GlobalData;
+            
+            const processedData = {
+                lastUpdate: new Date().toISOString(),
+                source: 'local-server-globaldata'
+            };
+            
+            // Traiter les données du site (index 0)
+            if (site && typeof site === 'object') {
+                console.log('[mergeDataWithGlobalData] Traitement des données site:', site);
+                processedData.site = site;
+            }
+            
+            // Traiter les données utilisateur (index 1)
+            if (user && typeof user === 'object') {
+                console.log('[mergeDataWithGlobalData] Traitement des données utilisateur:', user);
+                processedData.user = user;
+            }
+            
+            // Traiter les données du template (index 2)
+            if (template && typeof template === 'object') {
+                console.log('[mergeDataWithGlobalData] Traitement des données template:', template);
+                processedData.template = template;
+            }
+            
+            // Traiter les posts (index 3)
+            if (posts && (Array.isArray(posts) || typeof posts === 'object')) {
+                console.log('[mergeDataWithGlobalData] Traitement des posts:', posts);
+                processedData.posts = posts;
+            }
+              // Traiter le portfolio (index 4)
+            if (portfolio && (Array.isArray(portfolio) || typeof portfolio === 'object')) {
+                console.log('[mergeDataWithGlobalData] Traitement du portfolio:', portfolio);
+                
+                // Adapter le format portfolio pour correspondre à la structure locale
+                if (Array.isArray(portfolio)) {
+                    processedData.portfolio = {
+                        projects: portfolio.map(item => adaptPortfolioItem(item)),
+                        categories: extractPortfolioCategories(portfolio)
+                    };
+                } else if (typeof portfolio === 'object') {
+                    processedData.portfolio = portfolio;
+                }
+            }
+            
+            // Traiter les messages (index 5)
+            if (messages && (Array.isArray(messages) || typeof messages === 'object')) {
+                console.log('[mergeDataWithGlobalData] Traitement des messages:', messages);
+                processedData.messages = messages;
+            }
+            
+            console.log('[mergeDataWithGlobalData] Données restructurées:', processedData);
+            newData = processedData;
+        }
+        // Traitement spécial si les données sont un tableau (ancien format)
+        else if (Array.isArray(newData)) {
+            console.log('[mergeDataWithGlobalData] Traitement des données en format tableau (ancien format)');
+            
+            const processedData = {
+                site: {},
+                user: {},
+                lastUpdate: new Date().toISOString(),
+                source: 'local-server-array'
+            };
+            
+            // Parcourir le tableau pour extraire les informations
+            newData.forEach((item, index) => {
+                if (item && typeof item === 'object' && item._id) {
+                    console.log(`[mergeDataWithGlobalData] Traitement de l'élément ${index}:`, item);
+                    
+                    // Si l'objet contient siteName, c'est probablement les données du site
+                    if (item.siteName) {
+                        console.log('[mergeDataWithGlobalData] Données du site détectées');
+                        processedData.site = {
+                            id: item._id,
+                            name: item.siteName,
+                            theme: item.theme || {},
+                            settings: item.settings || {},
+                            createdAt: item.createdAt,
+                            updatedAt: item.updatedAt,
+                            ...item // Inclure toutes les autres propriétés
+                        };
+                    }
+                    
+                    // Si l'objet contient username ou email, c'est probablement les données utilisateur
+                    if (item.username || item.email) {
+                        console.log('[mergeDataWithGlobalData] Données utilisateur détectées');
+                        processedData.user = {
+                            id: item._id,
+                            username: item.username,
+                            email: item.email,
+                            profile: {
+                                firstName: item.firstName || '',
+                                secondName: item.secondName || '',
+                                description: item.description || '',
+                                experience: item.experience || '',
+                                expertise: item.expertise || '',
+                                domaine: item.domaine || '',
+                                objectifs: item.objectifs || '',
+                                dateOfBirth: item.dateOfBirth || '',
+                                address: item.address || '',
+                                city: item.city || '',
+                                country: item.country || '',
+                                telephone: item.telephone || '',
+                                whatsapp: item.whatsapp || '',
+                                sport: item.sport || '',
+                                languesParlees: item.languesParlees || ''
+                            },
+                            company: {
+                                name: item.companyName || '',
+                                description: item.companyDescription || '',
+                                email: item.companyEmail || '',
+                                phone: item.companyPhone || '',
+                                website: item.companyWebsite || '',
+                                address: item.companyAddress || '',
+                                logo: item.companyLogo || ''
+                            },
+                            social: {
+                                website: item.website || '',
+                                linkedin: item.linkedin || '',
+                                github: item.github || '',
+                                facebook: item.facebook || '',
+                                instagram: item.instagram || ''
+                            },
+                            files: {
+                                profileImage1: item.profileImage1 || '',
+                                profileImage2: item.profileImage2 || '',
+                                profileImage3: item.profileImage3 || '',
+                                profileUrl: item.profileUrl || '',
+                                cvFile: item.cvFile || '',
+                                logo: item.logo || '',
+                                postalCardFile: item.postalCardFile || ''
+                            },
+                            settings: {
+                                isAdmin: item.isAdmin || false,
+                                isVerified: item.isVerified || false,
+                                isGoogleAuth: item.isGoogleAuth || false
+                            },
+                            createdAt: item.createdAt,
+                            updatedAt: item.updatedAt
+                        };
+                    }
+                }
+            });
+            
+            console.log('[mergeDataWithGlobalData] Données traitées (ancien format):', processedData);
+            newData = processedData;
+        }
+        
+        // Fonction récursive pour fusionner en profondeur
+        function deepMergeNonNull(target, source) {
+            const result = { ...target };
+            
+            for (const key in source) {
+                if (source.hasOwnProperty(key)) {
+                    const sourceValue = source[key];
+                    
+                    // Si la valeur source est null ou undefined, garder la valeur existante
+                    if (sourceValue === null || sourceValue === undefined) {
+                        console.log(`[mergeDataWithGlobalData] Valeur null pour '${key}', conservation de la valeur existante`);
+                        continue;
+                    }
+                    
+                    // Si la valeur source est un objet et que la cible a aussi un objet, fusionner récursivement
+                    if (isObject(sourceValue) && isObject(result[key])) {
+                        result[key] = deepMergeNonNull(result[key], sourceValue);
+                    } else {
+                        // Sinon, remplacer la valeur
+                        result[key] = sourceValue;
+                        console.log(`[mergeDataWithGlobalData] Mise à jour de '${key}':`, sourceValue);
+                    }
+                }
+            }
+            
+            return result;
+        }
+        
+        // Effectuer la fusion
+        const mergedData = deepMergeNonNull(currentData, newData);
+        
+        // Mettre à jour GlobalData
+        window.globalData = mergedData;
+        
+        // Sauvegarder dans localStorage
+        if (typeof localStorage !== 'undefined') {
+            localStorage.setItem('globalData', JSON.stringify(mergedData));
+            console.log('[mergeDataWithGlobalData] Données sauvegardées dans localStorage');
+        }
+        
+        console.log('[mergeDataWithGlobalData] Fusion terminée avec succès');
+        console.log('[mergeDataWithGlobalData] GlobalData final:', window.globalData);
+        return mergedData;
+        
+    } catch (error) {
+        console.error('[mergeDataWithGlobalData] Erreur lors de la fusion:', error);
+        return window.globalData; // Retourner les données existantes en cas d'erreur
+    }
+}
+
+// Fonction pour adapter un élément portfolio du serveur vers la structure locale
+function adaptPortfolioItem(portfolioItem) {
+    try {
+        console.log('[adaptPortfolioItem] Adaptation de l\'élément portfolio:', portfolioItem);
+        
+        // Extraire l'année de la date de création
+        let year = new Date().getFullYear().toString(); // Année par défaut
+        if (portfolioItem.createdAt) {
+            try {
+                year = new Date(portfolioItem.createdAt).getFullYear().toString();
+            } catch (dateError) {
+                console.warn('[adaptPortfolioItem] Erreur parsing date:', dateError);
+            }
+        }
+        
+        // Structure locale attendue
+        const adaptedItem = {
+            id: portfolioItem._id || `portfolio_${Date.now()}`,
+            title: portfolioItem.title || 'Projet sans titre',
+            description: portfolioItem.description || 'Description non disponible',
+            category: portfolioItem.category || 'general',
+            type: portfolioItem.type || 'project',
+            image:portfolioItem.imageUrl || 'images/default-portfolio.jpg',
+            thumbnail:portfolioItem.imageUrl || 'images/default-portfolio.jpg',
+            year: year,
+            status: portfolioItem.status || 'active',
+            // Conserver les données originales pour référence
+            originalData: portfolioItem
+        };
+        
+        console.log('[adaptPortfolioItem] Élément adapté:', adaptedItem);
+        return adaptedItem;
+        
+    } catch (error) {
+        console.error('[adaptPortfolioItem] Erreur lors de l\'adaptation:', error);
+        
+        // Retourner un élément par défaut en cas d'erreur
+        return {
+            id: `portfolio_error_${Date.now()}`,
+            title: 'Erreur de chargement',
+            description: 'Impossible de charger ce projet',
+            category: 'error',
+            type: 'error',
+            image: 'images/default-portfolio.jpg',
+            thumbnail: 'images/default-portfolio.jpg',
+            year: new Date().getFullYear().toString(),
+            status: 'error',
+            originalData: portfolioItem
+        };
+    }
+}
+
+// Fonction pour extraire les catégories du portfolio
+function extractPortfolioCategories(portfolioArray) {
+    try {
+        const categories = new Set();
+        
+        portfolioArray.forEach(item => {
+            if (item && item.category) {
+                categories.add(item.category);
+            }
+        });
+        
+        const categoriesArray = Array.from(categories);
+        console.log('[extractPortfolioCategories] Catégories extraites:', categoriesArray);
+        
+        return categoriesArray.length > 0 ? categoriesArray : ['general'];
+        
+    } catch (error) {
+        console.error('[extractPortfolioCategories] Erreur extraction catégories:', error);
+        return ['general'];
+    }
+}
+
+// Fonction utilitaire pour tester la récupération de données
+window.testFetchGlobalData = async function(baseUrl = 'http://localhost:5000/site/details/', siteId = '6850a08abfd9deacfe51cd28') {
+    console.log(`[testFetchGlobalData] Test de récupération depuis ${baseUrl}/${siteId}`);
+    
+    // Sauvegarder l'état actuel de GlobalData
+    const originalData = JSON.parse(JSON.stringify(window.globalData));
+    
+    try {
+        const success = await window.fetchAndMergeGlobalData(baseUrl, siteId);
+        
+        if (success) {
+            console.log('✅ Test réussi - Données récupérées et fusionnées');
+            console.log('📊 GlobalData avant:', originalData);
+            console.log('📊 GlobalData après:', window.globalData);
+        } else {
+            console.log('❌ Test échoué - Impossible de récupérer les données');
+        }
+        
+        return success;
+    } catch (error) {
+        console.error('❌ Erreur pendant le test:', error);
+        return false;
+    }
+};
+
+// Fonction pour créer des données de test simulées
+window.simulateRemoteData = function() {
+    return {
+        site: {
+            name: 'BEE Company Remote',
+            tagline: 'Excellence from the Cloud',
+            email: 'remote@beecompany.com',
+            phone: '+243 987 654 321',
+            address: null, // Cette valeur ne sera pas écrasée
+            social: {
+                facebook: 'https://facebook.com/beecompany',
+                twitter: null, // Cette valeur ne sera pas écrasée
+                linkedin: 'https://linkedin.com/company/beecompany'
+            }
+        },
+        theme: {
+            name: 'Thème distant',
+            colors: {
+                primary: '#ff6b35',
+                accent1: '#f7931e',
+                textPrimary: null // Cette valeur ne sera pas écrasée
+            }
+        },
+        newSection: {
+            title: 'Nouvelle section',
+            description: 'Ajoutée depuis les données distantes'
+        }
+    };
+};
+
+// Fonction de test avec données simulées
+window.testWithSimulatedData = function() {
+    console.log('[testWithSimulatedData] Test avec données simulées...');
+    
+    const simulatedData = window.simulateRemoteData();
+    console.log('📡 Données simulées:', simulatedData);
+    
+    const originalData = JSON.parse(JSON.stringify(window.globalData));
+    console.log('📊 GlobalData avant:', originalData);
+    
+    // Simuler la fusion
+    const mergedData = mergeDataWithGlobalData(simulatedData);
+    window.globalData = mergedData;
+    
+    console.log('📊 GlobalData après fusion:', window.globalData);
+    console.log('✅ Test de fusion avec données simulées terminé');
+    
+    // Déclencher l'événement de mise à jour
+    const event = new CustomEvent('globalDataUpdated', {
+        detail: { 
+            source: 'simulated',
+            data: simulatedData 
+        }
+    });
+    window.dispatchEvent(event);
+};
 
 //# sourceMappingURL=globalData.js.map

@@ -9,7 +9,6 @@
 }
 
 .navbar-brand {
-    color: var(--theme-text-light) !important;
     font-weight: 600;
     transition: var(--theme-transition-fast);
 }

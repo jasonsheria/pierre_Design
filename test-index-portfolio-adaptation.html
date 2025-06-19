@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Adaptation Portfolio Index</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/theme-enhanced.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f8f9fa;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+        }
+        .test-section h3 {
+            color: #495057;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .warning { background-color: #fff3cd; color: #856404; }
+        
+        .slider-preview {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+        
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .project-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+        }
+        
+        .project-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        
+        .project-card .content {
+            padding: 15px;
+        }
+        
+        .project-card .category {
+            background: #007bff;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+        
+        .project-card h4 {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+        }
+        
+        .project-card .description {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        #console-log {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Test - Adaptation Portfolio Page d'Accueil</h1>
+        <p>Cette page teste l'adaptation du portfolio et du slider dans la page d'accueil avec la nouvelle structure globalData.</p>
+        
+        <div class="test-section">
+            <h3>📊 État du système</h3>
+            <div id="system-status">
+                <p>⏳ Vérification en cours...</p>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎬 Aperçu des Sliders</h3>
+            <div id="slider-preview">
+                <p>⏳ Chargement des sliders...</p>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎨 Projets en Vedette (8 premiers)</h3>
+            <div id="featured-projects">
+                <p>⏳ Chargement des projets...</p>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📋 Détails de la Structure</h3>
+            <div id="structure-details">
+                <p>⏳ Analyse de la structure...</p>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔧 Actions de Test</h3>
+            <button id="btn-test-local" class="btn btn-primary">Test avec Données Locales</button>
+            <button id="btn-test-remote" class="btn btn-secondary" style="margin-left: 10px;">Test avec Données Distantes</button>
+            <button id="btn-refresh" class="btn btn-success" style="margin-left: 10px;">Actualiser</button>
+        </div>
+
+        <div class="test-section">
+            <h3>📝 Journal Console</h3>
+            <div id="console-log"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/globalData.js"></script>
+    <script>
+        // Redirection des logs vers notre interface
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        function addToConsoleLog(message, type = 'log') {
+            const consoleEl = document.getElementById('console-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : type === 'warn' ? '⚠️' : 'ℹ️';
+            consoleEl.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToConsoleLog(args.join(' '), 'log');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToConsoleLog(args.join(' '), 'error');
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addToConsoleLog(args.join(' '), 'warn');
+        };
+
+        // Attendre que globalData soit prêt
+        document.addEventListener('globalDataReady', function() {
+            console.log('🚀 GlobalData prêt, début des tests');
+            testPortfolioAdaptation();
+        });
+
+        function testPortfolioAdaptation() {
+            console.log('=== DÉBUT TEST ADAPTATION PORTFOLIO ===');
+            
+            // Test du système
+            testSystemStatus();
+            
+            // Test des sliders
+            testSliderAdaptation();
+            
+            // Test des projets en vedette
+            testFeaturedProjects();
+            
+            // Test de la structure
+            analyzeStructure();
+            
+            console.log('=== FIN TEST ADAPTATION PORTFOLIO ===');
+        }
+        
+        function testSystemStatus() {
+            const statusEl = document.getElementById('system-status');
+            let html = '';
+            
+            // Vérifier globalData
+            if (typeof window.globalData !== 'undefined') {
+                html += '<p>✅ GlobalData disponible <span class="status success">OK</span></p>';
+            } else {
+                html += '<p>❌ GlobalData indisponible <span class="status error">ERREUR</span></p>';
+            }
+            
+            // Vérifier getPortfolio
+            if (typeof window.getPortfolio === 'function') {
+                html += '<p>✅ Fonction getPortfolio() disponible <span class="status success">OK</span></p>';
+            } else {
+                html += '<p>⚠️ Fonction getPortfolio() indisponible <span class="status warning">ATTENTION</span></p>';
+            }
+            
+            // Vérifier la structure portfolio
+            if (window.globalData?.portfolio) {
+                if (window.globalData.portfolio.projects) {
+                    html += '<p>✅ Structure globalData.portfolio.projects trouvée <span class="status success">NOUVELLE</span></p>';
+                } else if (window.globalData.portfolio[window.globalData.languages?.current]) {
+                    html += '<p>✅ Structure localisée trouvée <span class="status success">LOCALISÉE</span></p>';
+                } else {
+                    html += '<p>⚠️ Structure portfolio non reconnue <span class="status warning">ATTENTION</span></p>';
+                }
+            } else {
+                html += '<p>❌ Aucun portfolio trouvé <span class="status error">ERREUR</span></p>';
+            }
+            
+            statusEl.innerHTML = html;
+        }
+        
+        function testSliderAdaptation() {
+            const sliderPreviewEl = document.getElementById('slider-preview');
+            let html = '';
+            
+            // Récupérer le portfolio selon la nouvelle logique
+            let portfolioProjects = [];
+            if (typeof getPortfolio === 'function') {
+                portfolioProjects = getPortfolio() || [];
+                console.log('Slider: Portfolio récupéré via getPortfolio():', portfolioProjects.length, 'projets');
+            } else if (globalData?.portfolio?.projects) {
+                portfolioProjects = globalData.portfolio.projects || [];
+                console.log('Slider: Portfolio récupéré via globalData.portfolio.projects:', portfolioProjects.length, 'projets');
+            } else if (globalData?.portfolio?.[globalData?.languages?.current]) {
+                portfolioProjects = globalData.portfolio[globalData.languages.current] || [];
+                console.log('Slider: Portfolio récupéré via structure localisée:', portfolioProjects.length, 'projets');
+            }
+            
+            if (portfolioProjects.length > 0) {
+                html += `<p>✅ <strong>${portfolioProjects.length} projets</strong> disponibles pour les sliders</p>`;
+                
+                // Afficher un aperçu des 3 premiers sliders
+                const slidersToShow = portfolioProjects.slice(0, 3);
+                slidersToShow.forEach((proj, idx) => {
+                    html += `
+                        <div class="slider-preview" style="background-image: url(${proj.image});">
+                            Slider ${idx + 1}: ${proj.title}
+                        </div>
+                    `;
+                });
+                
+                if (portfolioProjects.length > 3) {
+                    html += `<p><em>... et ${portfolioProjects.length - 3} autres projets disponibles</em></p>`;
+                }
+            } else {
+                html += '<p>❌ Aucun projet disponible pour les sliders</p>';
+            }
+            
+            sliderPreviewEl.innerHTML = html;
+        }
+        
+        function testFeaturedProjects() {
+            const featuredEl = document.getElementById('featured-projects');
+            let html = '';
+            
+            // Récupérer le portfolio selon la nouvelle logique
+            let portfolioProjects = [];
+            if (typeof getPortfolio === 'function') {
+                portfolioProjects = getPortfolio() || [];
+                console.log('Featured: Portfolio récupéré via getPortfolio():', portfolioProjects.length, 'projets');
+            } else if (globalData?.portfolio?.projects) {
+                portfolioProjects = globalData.portfolio.projects || [];
+                console.log('Featured: Portfolio récupéré via globalData.portfolio.projects:', portfolioProjects.length, 'projets');
+            } else if (globalData?.portfolio?.[globalData?.languages?.current]) {
+                portfolioProjects = globalData.portfolio[globalData.languages.current] || [];
+                console.log('Featured: Portfolio récupéré via structure localisée:', portfolioProjects.length, 'projets');
+            }
+            
+            if (portfolioProjects.length > 0) {
+                const featuredProjects = portfolioProjects.slice(0, 8);
+                html += `<p>✅ Affichage de <strong>${featuredProjects.length}</strong> projets en vedette (sur ${portfolioProjects.length} disponibles)</p>`;
+                
+                html += '<div class="project-grid">';
+                featuredProjects.forEach((proj, idx) => {
+                    html += `
+                        <div class="project-card">
+                            <img src="${proj.image}" alt="${proj.title}" onerror="this.src='images/placeholder.jpg'">
+                            <div class="content">
+                                <span class="category">${proj.category || proj.type || 'Projet'}</span>
+                                <h4>${proj.title}</h4>
+                                <p class="description">${proj.description || ''}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            } else {
+                html += '<p>❌ Aucun projet disponible pour la section vedette</p>';
+            }
+            
+            featuredEl.innerHTML = html;
+        }
+        
+        function analyzeStructure() {
+            const structureEl = document.getElementById('structure-details');
+            let html = '';
+            
+            html += '<h4>🔍 Analyse de la structure GlobalData</h4>';
+            
+            if (window.globalData) {
+                // Analyser la structure portfolio
+                html += '<h5>Portfolio:</h5>';
+                if (window.globalData.portfolio) {
+                    if (window.globalData.portfolio.projects) {
+                        html += `<p>• <strong>globalData.portfolio.projects</strong>: ${window.globalData.portfolio.projects.length} projets</p>`;
+                        if (window.globalData.portfolio.categories) {
+                            html += `<p>• <strong>globalData.portfolio.categories</strong>: ${window.globalData.portfolio.categories.length} catégories</p>`;
+                        }
+                    }
+                    
+                    // Vérifier les structures localisées
+                    const languages = window.globalData.languages?.available || ['fr', 'en'];
+                    languages.forEach(lang => {
+                        if (window.globalData.portfolio[lang]) {
+                            html += `<p>• <strong>globalData.portfolio.${lang}</strong>: ${window.globalData.portfolio[lang].length} projets</p>`;
+                        }
+                    });
+                } else {
+                    html += '<p>❌ Aucune structure portfolio trouvée</p>';
+                }
+                
+                // Analyser les langues
+                html += '<h5>Configuration multilingue:</h5>';
+                if (window.globalData.languages) {
+                    html += `<p>• Langue courante: <strong>${window.globalData.languages.current}</strong></p>`;
+                    html += `<p>• Langues disponibles: <strong>${window.globalData.languages.available.join(', ')}</strong></p>`;
+                } else {
+                    html += '<p>❌ Configuration multilingue manquante</p>';
+                }
+                
+                // Tester getPortfolio()
+                html += '<h5>Test getPortfolio():</h5>';
+                if (typeof window.getPortfolio === 'function') {
+                    try {
+                        const portfolio = window.getPortfolio();
+                        if (portfolio && Array.isArray(portfolio)) {
+                            html += `<p>✅ getPortfolio() retourne ${portfolio.length} projets</p>`;
+                            if (portfolio.length > 0) {
+                                const firstProject = portfolio[0];
+                                html += `<p>• Premier projet: <strong>${firstProject.title}</strong></p>`;
+                                html += `<p>• Propriétés: ${Object.keys(firstProject).join(', ')}</p>`;
+                            }
+                        } else {
+                            html += '<p>⚠️ getPortfolio() ne retourne pas un tableau valide</p>';
+                        }
+                    } catch (error) {
+                        html += `<p>❌ Erreur getPortfolio(): ${error.message}</p>`;
+                    }
+                } else {
+                    html += '<p>❌ Fonction getPortfolio() non disponible</p>';
+                }
+            } else {
+                html += '<p>❌ GlobalData non disponible</p>';
+            }
+            
+            structureEl.innerHTML = html;
+        }
+        
+        // Boutons d'action
+        document.getElementById('btn-test-local').addEventListener('click', function() {
+            console.log('🔄 Test avec données locales...');
+            testPortfolioAdaptation();
+        });
+        
+        document.getElementById('btn-test-remote').addEventListener('click', function() {
+            console.log('🌐 Test avec récupération distante...');
+            if (typeof window.fetchAndMergeGlobalData === 'function') {
+                window.fetchAndMergeGlobalData('http://localhost:5000', 'demo-11')
+                    .then(() => {
+                        console.log('✅ Données distantes récupérées, re-test...');
+                        setTimeout(() => testPortfolioAdaptation(), 1000);
+                    })
+                    .catch(error => {
+                        console.error('❌ Erreur récupération distante:', error);
+                    });
+            } else {
+                console.error('❌ Fonction fetchAndMergeGlobalData non disponible');
+            }
+        });
+        
+        document.getElementById('btn-refresh').addEventListener('click', function() {
+            location.reload();
+        });
+        
+        // Démarrer le test si globalData est déjà prêt
+        if (window.globalData) {
+            setTimeout(() => testPortfolioAdaptation(), 500);
+        }
+    </script>
+</body>
+</html>

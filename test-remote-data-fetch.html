@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Récupération de Données Distantes</title>
+    
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/theme-enhanced.css">
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: var(--theme-bg-light, #f8f9fa);
+            color: var(--theme-text-primary, #212529);
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .test-header {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, var(--theme-primary, #1683fb), var(--theme-accent1, #ff9800));
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .test-section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .test-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .test-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: var(--theme-primary, #1683fb);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--theme-primary-hover, #0056b3);
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+        
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+        }
+        
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background: #138496;
+            transform: translateY(-2px);
+        }
+        
+        .form-control {
+            padding: 10px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .form-control:focus {
+            border-color: var(--theme-primary, #1683fb);
+            box-shadow: 0 0 0 0.2rem rgba(22, 131, 251, 0.25);
+            outline: none;
+        }
+        
+        .data-display {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .data-box {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .data-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--theme-primary, #1683fb);
+            padding-bottom: 5px;
+            border-bottom: 2px solid var(--theme-primary, #1683fb);
+        }
+        
+        .json-content {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            color: #495057;
+        }
+        
+        .log-container {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 3px 0;
+        }
+        
+        .log-info { color: #0066cc; }
+        .log-success { color: #28a745; }
+        .log-warning { color: #ffc107; }
+        .log-error { color: #dc3545; }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-ready { background: #6c757d; }
+        .status-loading { background: #ffc107; animation: pulse 1s infinite; }
+        .status-success { background: #28a745; }
+        .status-error { background: #dc3545; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .url-examples {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .url-example {
+            font-family: 'Courier New', monospace;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin: 5px 0;
+            border-left: 4px solid var(--theme-primary, #1683fb);
+        }
+        
+        @media (max-width: 768px) {
+            .data-display {
+                grid-template-columns: 1fr;
+            }
+            
+            .test-controls {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Scripts -->
+    <script src="js/globalData.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/theme-controller.js"></script>
+    
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🌐 Test - Récupération de Données Distantes</h1>
+            <p>Test de la méthode fetchAndMergeGlobalData() pour intégrer des données depuis une API</p>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎯 Configuration de l'URL</h3>            <div class="url-examples">
+                <div><strong>Format attendu :</strong></div>
+                <div class="url-example">{baseUrl}/site/details/{siteId}</div>
+                <div><strong>URL par défaut (serveur local) :</strong></div>
+                <div class="url-example">http://localhost:5000/site/details/demo-11</div>
+                <div><strong>Autres exemples d'URLs de test :</strong></div>
+                <div class="url-example">https://jsonplaceholder.typicode.com/posts/1 (test avec JSONPlaceholder)</div>
+                <div class="url-example">https://api.github.com/users/octocat (test GitHub API)</div>
+                <div style="font-size: 12px; color: #6c757d; margin-top: 10px;">
+                    <strong>Note :</strong> Assurez-vous que votre serveur local sur le port 5000 est démarré.
+                    Utilisez "Tester avec Données Simulées" si le serveur n'est pas disponible.
+                </div>
+            </div>
+              <div class="test-controls">                <div class="control-group">
+                    <label><strong>URL de base :</strong></label>
+                    <input type="text" id="base-url" class="form-control" placeholder="http://localhost:5000" value="http://localhost:5000">
+                </div>
+                <div class="control-group">
+                    <label><strong>ID du site :</strong></label>
+                    <input type="text" id="site-id" class="form-control" placeholder="demo-11" value="demo-11">
+                </div>
+                <div class="control-group">
+                    <label><strong>URLs d'exemple :</strong></label>                    <select class="form-control" onchange="setExampleUrl(this.value)">
+                        <option value="">-- Choisir un exemple --</option>
+                        <option value="localhost|demo-11">Serveur Local (Port 5000)</option>
+                        <option value="jsonplaceholder|1">JSONPlaceholder Posts</option>
+                        <option value="github|octocat">GitHub API User</option>
+                        <option value="custom|demo-11">API Personnalisée</option>
+                    </select>
+                </div>
+            </div>
+              <div class="test-controls">
+                <button class="test-btn btn-primary" onclick="testRealAPI()">
+                    <span class="status-indicator status-ready" id="real-status"></span>
+                    🌐 Tester avec API Réelle
+                </button>
+                <button class="test-btn btn-success" onclick="testSimulatedData()">
+                    <span class="status-indicator status-ready" id="sim-status"></span>
+                    🧪 Tester avec Données Simulées
+                </button>
+                <button class="test-btn btn-info" onclick="testWithJsonPlaceholder()">
+                    <span class="status-indicator status-ready" id="json-status"></span>
+                    📡 Tester avec JSONPlaceholder
+                </button>
+                <button class="test-btn btn-warning" onclick="showCurrentData()">
+                    📊 Afficher GlobalData Actuel
+                </button>
+                <button class="test-btn btn-info" onclick="resetGlobalData()">
+                    🔄 Réinitialiser GlobalData
+                </button>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 Comparaison des Données</h3>
+            <div class="data-display">
+                <div class="data-box">
+                    <div class="data-title">GlobalData Avant</div>
+                    <div class="json-content" id="data-before">
+                        Cliquez sur "Afficher GlobalData Actuel" pour voir les données...
+                    </div>
+                </div>
+                <div class="data-box">
+                    <div class="data-title">GlobalData Après</div>
+                    <div class="json-content" id="data-after">
+                        Les données mises à jour apparaîtront ici après un test...
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📝 Journal des Opérations</h3>
+            <div class="log-container" id="operation-log">
+                <div class="log-entry log-info">📋 Prêt pour les tests...</div>
+            </div>
+            <button class="test-btn" style="background: #6c757d; color: white; margin-top: 10px;" onclick="clearLog()">🗑️ Vider le Journal</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>📖 Guide d'Utilisation</h3>
+            <div style="line-height: 1.6;">
+                <h4>🔧 Fonction Principale</h4>
+                <div class="url-example">await window.fetchAndMergeGlobalData(baseUrl, siteId)</div>
+                
+                <h4>📝 Paramètres</h4>
+                <ul>
+                    <li><strong>baseUrl</strong> : URL de base de votre API (ex: "https://api.example.com")</li>
+                    <li><strong>siteId</strong> : Identifiant du site (par défaut: "demo-11")</li>
+                </ul>
+                
+                <h4>🔄 Comportement</h4>
+                <ul>
+                    <li>Envoie une requête GET vers <code>{baseUrl}/site/details/{siteId}</code></li>
+                    <li>Fusionne les données reçues avec GlobalData existant</li>
+                    <li>Les valeurs <code>null</code> dans les données distantes sont ignorées</li>
+                    <li>Les valeurs existantes sont préservées si les nouvelles sont <code>null</code></li>
+                    <li>Déclenche l'événement <code>globalDataUpdated</code> en cas de succès</li>
+                    <li>Sauvegarde automatiquement dans localStorage</li>
+                </ul>
+                
+                <h4>🎯 Exemples d'Usage</h4>
+                <div class="url-example">
+// Usage basique<br>
+await window.fetchAndMergeGlobalData('https://api.mysite.com', 'demo-11');<br><br>
+// Avec gestion des événements<br>
+window.addEventListener('globalDataUpdated', (event) => {<br>
+&nbsp;&nbsp;console.log('Données mises à jour:', event.detail);<br>
+});
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let originalGlobalData = null;
+          // Fonction de logging
+        function log(message, type = 'info') {
+            const logContainer = document.getElementById('operation-log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            console.log(`[REMOTE-DATA-TEST] ${message}`);
+        }
+          // Définir les URLs d'exemple
+        function setExampleUrl(value) {
+            if (!value) return;
+            
+            const [type, id] = value.split('|');
+            const baseUrlInput = document.getElementById('base-url');
+            const siteIdInput = document.getElementById('site-id');
+            
+            switch(type) {
+                case 'localhost':
+                    baseUrlInput.value = 'http://localhost:5000';
+                    siteIdInput.value = id;
+                    log(`📝 URL configurée: Serveur Local/site/details/${id}`, 'info');
+                    break;
+                case 'jsonplaceholder':
+                    baseUrlInput.value = 'https://jsonplaceholder.typicode.com';
+                    siteIdInput.value = id;
+                    log(`📝 URL configurée: JSONPlaceholder Posts/${id}`, 'info');
+                    break;
+                case 'github':
+                    baseUrlInput.value = 'https://api.github.com';
+                    siteIdInput.value = id;
+                    log(`📝 URL configurée: GitHub API Users/${id}`, 'info');
+                    break;
+                case 'custom':
+                    baseUrlInput.value = 'https://api.example.com';
+                    siteIdInput.value = id;
+                    log(`📝 URL configurée: API Personnalisée/${id}`, 'info');
+                    break;
+            }
+        }
+        
+        // Mettre à jour le statut
+        function updateStatus(elementId, status) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.className = `status-indicator status-${status}`;
+            }
+        }
+        
+        // Afficher les données JSON de manière formatée
+        function displayData(data, elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = JSON.stringify(data, null, 2);
+            }
+        }        // Test avec API réelle
+        async function testRealAPI() {
+            const baseUrl = document.getElementById('base-url').value.trim();
+            const siteId = document.getElementById('site-id').value.trim();
+            
+            if (!baseUrl || !siteId) {
+                log('❌ Veuillez remplir l\'URL de base et l\'ID du site', 'error');
+                return;
+            }
+            
+            // Déterminer le type d'API et construire l'URL appropriée
+            let testUrl;
+            let apiType = 'custom';
+            
+            if (baseUrl.includes('localhost:5000')) {
+                testUrl = `${baseUrl}/site/details/${siteId}`;
+                apiType = 'localhost';
+                log(`🏠 Test avec Serveur Local: ${testUrl}`, 'info');
+            } else if (baseUrl.includes('jsonplaceholder.typicode.com')) {
+                testUrl = `${baseUrl}/posts/${siteId}`;
+                apiType = 'jsonplaceholder';
+                log(`📡 Test avec JSONPlaceholder: ${testUrl}`, 'info');
+            } else if (baseUrl.includes('api.github.com')) {
+                testUrl = `${baseUrl}/users/${siteId}`;
+                apiType = 'github';
+                log(`🐙 Test avec GitHub API: ${testUrl}`, 'info');
+            } else {
+                testUrl = `${baseUrl}/site/details/${siteId}`;
+                log(`🌐 Test avec API personnalisée: ${testUrl}`, 'info');
+            }
+            
+            updateStatus('real-status', 'loading');
+            
+            // Sauvegarder l'état actuel
+            originalGlobalData = JSON.parse(JSON.stringify(window.globalData));
+            displayData(originalGlobalData, 'data-before');
+            
+            try {
+                log(`🔄 Envoi de la requête...`, 'info');
+                const response = await fetch(testUrl);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log('✅ Données récupérées avec succès', 'success');
+                    log(`📊 Taille des données: ${JSON.stringify(data).length} caractères`, 'info');
+                    
+                    // Adapter les données selon le type d'API
+                    let adaptedData;
+                    
+                    if (apiType === 'localhost') {
+                        // Serveur local - utiliser les données telles quelles ou avec adaptation minimale
+                        adaptedData = data;
+                        log('🏠 Données du serveur local utilisées directement', 'info');
+                    } else if (apiType === 'jsonplaceholder') {
+                        adaptedData = {
+                            site: {
+                                title: data.title || 'Titre depuis JSONPlaceholder',
+                                description: data.body || 'Description depuis JSONPlaceholder',
+                                lastUpdate: new Date().toISOString()
+                            },
+                            external: {
+                                jsonplaceholder: data
+                            }
+                        };
+                    } else if (apiType === 'github') {
+                        adaptedData = {
+                            site: {
+                                title: data.name || data.login || 'Nom depuis GitHub',
+                                description: data.bio || 'Bio depuis GitHub',
+                                lastUpdate: new Date().toISOString()
+                            },
+                            external: {
+                                github: data
+                            }
+                        };
+                    } else {
+                        // API personnalisée - utiliser les données telles quelles
+                        adaptedData = data;
+                    }
+                    
+                    // Fusionner avec GlobalData
+                    log('🔄 Fusion des données avec GlobalData...', 'info');
+                    window.mergeDataWithGlobalData(adaptedData);
+                    
+                    log('✅ Données fusionnées avec succès', 'success');
+                    updateStatus('real-status', 'success');
+                    displayData(window.globalData, 'data-after');
+                    
+                    // Déclencher l'événement
+                    window.dispatchEvent(new CustomEvent('globalDataUpdated', {
+                        detail: { source: `${apiType}-api-test`, data: adaptedData, url: testUrl }
+                    }));
+                    
+                    // Montrer les différences
+                    logDataDifferences();
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                log(`❌ Erreur: ${error.message}`, 'error');
+                updateStatus('real-status', 'error');
+                
+                if (apiType === 'localhost') {
+                    log('💡 Vérifiez que votre serveur local est démarré sur le port 5000', 'warning');
+                    log('💡 Utilisez "Tester avec Données Simulées" en attendant', 'info');
+                } else if (error.message.includes('404')) {
+                    log('💡 Essayez avec le serveur local ou utilisez "Données Simulées"', 'info');
+                }
+            }
+        }
+        
+        // Test avec JSONPlaceholder (API publique)
+        async function testWithJsonPlaceholder() {
+            log('📡 Test avec JSONPlaceholder API...', 'info');
+            updateStatus('json-status', 'loading');
+            
+            // Sauvegarder l'état actuel
+            originalGlobalData = JSON.parse(JSON.stringify(window.globalData));
+            displayData(originalGlobalData, 'data-before');
+            
+            try {
+                // Test avec JSONPlaceholder posts API
+                const response = await fetch('https://jsonplaceholder.typicode.com/posts/1');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log('✅ Données reçues de JSONPlaceholder', 'success');
+                    
+                    // Adapter les données pour notre structure
+                    const adaptedData = {
+                        site: {
+                            title: data.title,
+                            description: data.body,
+                            lastUpdate: new Date().toISOString()
+                        },
+                        theme: {
+                            primary: '#007bff',
+                            secondary: '#6c757d'
+                        },
+                        portfolio: {
+                            featured: [
+                                {
+                                    id: data.id,
+                                    title: data.title,
+                                    description: data.body.substring(0, 100) + '...'
+                                }
+                            ]
+                        }
+                    };
+                    
+                    // Fusionner avec GlobalData
+                    window.mergeDataWithGlobalData(adaptedData);
+                    
+                    log('✅ Données adaptées et fusionnées avec succès', 'success');
+                    updateStatus('json-status', 'success');
+                    displayData(window.globalData, 'data-after');
+                    
+                    // Déclencher l'événement
+                    window.dispatchEvent(new CustomEvent('globalDataUpdated', {
+                        detail: { source: 'jsonplaceholder-test', data: adaptedData }
+                    }));
+                    
+                    // Montrer les différences
+                    logDataDifferences();
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                log(`❌ Erreur JSONPlaceholder: ${error.message}`, 'error');
+                updateStatus('json-status', 'error');
+            }
+        }
+
+        // Test avec données simulées
+        function testSimulatedData() {
+            log('🧪 Test avec données simulées...', 'info');
+            updateStatus('sim-status', 'loading');
+            
+            // Sauvegarder l'état actuel
+            originalGlobalData = JSON.parse(JSON.stringify(window.globalData));
+            displayData(originalGlobalData, 'data-before');
+            
+            setTimeout(() => {
+                try {
+                    window.testWithSimulatedData();
+                    log('✅ Données simulées fusionnées avec succès', 'success');
+                    updateStatus('sim-status', 'success');
+                    displayData(window.globalData, 'data-after');
+                    
+                    // Montrer les différences
+                    logDataDifferences();
+                } catch (error) {
+                    log(`❌ Erreur: ${error.message}`, 'error');
+                    updateStatus('sim-status', 'error');
+                }
+            }, 500);
+        }
+        
+        // Afficher les données actuelles
+        function showCurrentData() {
+            log('📊 Affichage des données GlobalData actuelles', 'info');
+            displayData(window.globalData, 'data-before');
+            log(`📈 Taille GlobalData: ${JSON.stringify(window.globalData).length} caractères`, 'info');
+        }
+        
+        // Réinitialiser GlobalData
+        function resetGlobalData() {
+            if (originalGlobalData) {
+                log('🔄 Restauration de GlobalData...', 'info');
+                window.globalData = JSON.parse(JSON.stringify(originalGlobalData));
+                displayData(window.globalData, 'data-after');
+                log('✅ GlobalData restauré', 'success');
+            } else {
+                log('⚠️ Aucune sauvegarde trouvée', 'warning');
+            }
+        }
+        
+        // Analyser les différences
+        function logDataDifferences() {
+            if (!originalGlobalData) return;
+            
+            log('🔍 Analyse des changements:', 'info');
+            
+            // Fonction simple pour comparer les objets
+            function findChanges(original, updated, path = '') {
+                for (const key in updated) {
+                    const currentPath = path ? `${path}.${key}` : key;
+                    
+                    if (!(key in original)) {
+                        log(`+ Ajouté: ${currentPath}`, 'success');
+                    } else if (typeof updated[key] === 'object' && updated[key] !== null) {
+                        if (typeof original[key] === 'object' && original[key] !== null) {
+                            findChanges(original[key], updated[key], currentPath);
+                        }
+                    } else if (original[key] !== updated[key]) {
+                        log(`~ Modifié: ${currentPath} = ${updated[key]}`, 'warning');
+                    }
+                }
+            }
+            
+            findChanges(originalGlobalData, window.globalData);
+        }
+        
+        // Vider le journal
+        function clearLog() {
+            const logContainer = document.getElementById('operation-log');
+            logContainer.innerHTML = '<div class="log-entry log-info">📋 Journal vidé...</div>';
+        }
+        
+        // Initialisation
+        window.addEventListener('load', function() {
+            log('🚀 Page de test chargée', 'success');
+            log('💡 Prêt pour tester la récupération de données distantes', 'info');
+            
+            // Vérifier les fonctions disponibles
+            if (typeof window.fetchAndMergeGlobalData === 'function') {
+                log('✅ Fonction fetchAndMergeGlobalData disponible', 'success');
+            } else {
+                log('❌ Fonction fetchAndMergeGlobalData non trouvée', 'error');
+            }
+            
+            if (typeof window.testFetchGlobalData === 'function') {
+                log('✅ Fonction testFetchGlobalData disponible', 'success');
+            } else {
+                log('❌ Fonction testFetchGlobalData non trouvée', 'error');
+            }
+            
+            // Afficher les données initiales
+            showCurrentData();
+        });
+        
+        // Écouter les événements de mise à jour
+        window.addEventListener('globalDataUpdated', function(event) {
+            log(`🎯 Événement reçu: globalDataUpdated (source: ${event.detail.source})`, 'success');
+        });
+        
+        window.addEventListener('globalDataUpdateError', function(event) {
+            log(`💥 Événement reçu: globalDataUpdateError - ${event.detail.error}`, 'error');
+        });
+    </script>
+</body>
+</html>

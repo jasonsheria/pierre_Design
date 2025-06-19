@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Configuration Serveur</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f8f9fa;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .config-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+        }
+        .config-section h3 {
+            color: #495057;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-secondary { background-color: #6c757d; color: white; }
+        .btn-warning { background-color: #ffc107; color: black; }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .status.success { background-color: #d4edda; color: #155724; }
+        .status.error { background-color: #f8d7da; color: #721c24; }
+        .status.info { background-color: #d1ecf1; color: #0c5460; }
+        .endpoint-list {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        #console-log {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🌍 Test - Configuration Serveur Global</h1>
+        <p>Cette page permet de tester et configurer l'URL du serveur global utilisée dans toute l'application.</p>
+        
+        <div class="config-section">
+            <h3>📡 Configuration Actuelle</h3>
+            <div id="current-config">
+                <p>⏳ Chargement de la configuration...</p>
+            </div>
+        </div>
+        
+        <div class="config-section">
+            <h3>🔧 Modifier la Configuration</h3>
+            <div class="form-group">
+                <label for="server-url">URL du Serveur :</label>
+                <input type="text" id="server-url" class="form-control" value="http://localhost:5000" placeholder="http://localhost:5000">
+            </div>
+            <button id="btn-update-config" class="btn btn-primary">Mettre à Jour</button>
+            <button id="btn-reset-config" class="btn btn-secondary">Réinitialiser</button>
+        </div>
+        
+        <div class="config-section">
+            <h3>🔗 Endpoints Disponibles</h3>
+            <div id="endpoints-list">
+                <p>⏳ Chargement des endpoints...</p>
+            </div>
+        </div>
+        
+        <div class="config-section">
+            <h3>🧪 Tests de Connexion</h3>
+            <button id="btn-test-base" class="btn btn-success">Tester Base</button>
+            <button id="btn-test-api" class="btn btn-success">Tester API</button>
+            <button id="btn-test-portfolio" class="btn btn-success">Tester Portfolio</button>
+            <button id="btn-test-fetch-data" class="btn btn-warning">Tester Récupération Données</button>
+            <div id="test-results"></div>
+        </div>
+        
+        <div class="config-section">
+            <h3>📋 Environnements Prédéfinis</h3>
+            <button id="btn-env-local-5000" class="btn btn-secondary">Local :5000</button>
+            <button id="btn-env-local-3000" class="btn btn-secondary">Local :3000</button>
+            <button id="btn-env-production" class="btn btn-secondary">Production</button>
+        </div>
+
+        <div class="config-section">
+            <h3>📝 Journal Console</h3>
+            <div id="console-log"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/globalData.js"></script>
+    <script>
+        // Redirection des logs vers notre interface
+        const originalLog = console.log;
+        const originalError = console.error;
+        
+        function addToConsoleLog(message, type = 'log') {
+            const consoleEl = document.getElementById('console-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const prefix = type === 'error' ? '❌' : 'ℹ️';
+            consoleEl.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToConsoleLog(args.join(' '), 'log');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToConsoleLog(args.join(' '), 'error');
+        };
+
+        // Attendre que globalData soit prêt
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                console.log('🚀 Page de test serveur prête');
+                updateCurrentConfig();
+                updateEndpointsList();
+                setupEventListeners();
+            }, 500);
+        });
+
+        function updateCurrentConfig() {
+            const configEl = document.getElementById('current-config');
+            
+            if (typeof window.SERVER_BASE_URL !== 'undefined') {
+                configEl.innerHTML = `
+                    <div class="status success">
+                        <strong>✅ Configuration serveur active</strong><br>
+                        URL de base: <code>${window.SERVER_BASE_URL}</code><br>
+                        Configuré via: Variable globale
+                    </div>
+                `;
+                
+                // Mettre à jour le champ input
+                document.getElementById('server-url').value = window.SERVER_BASE_URL;
+            } else {
+                configEl.innerHTML = `
+                    <div class="status error">
+                        <strong>❌ Configuration serveur non trouvée</strong><br>
+                        La variable SERVER_BASE_URL n'est pas définie.
+                    </div>
+                `;
+            }
+        }
+        
+        function updateEndpointsList() {
+            const endpointsEl = document.getElementById('endpoints-list');
+            
+            if (typeof window.SERVER_ENDPOINTS !== 'undefined') {
+                let html = '<div class="endpoint-list">';
+                for (const [key, url] of Object.entries(window.SERVER_ENDPOINTS)) {
+                    html += `<strong>${key}:</strong> ${url}<br>`;
+                }
+                html += '</div>';
+                
+                if (typeof window.buildServerUrl === 'function') {
+                    html += '<p><strong>✅ Fonction buildServerUrl() disponible</strong></p>';
+                } else {
+                    html += '<p><strong>❌ Fonction buildServerUrl() non disponible</strong></p>';
+                }
+                
+                endpointsEl.innerHTML = html;
+            } else {
+                endpointsEl.innerHTML = `
+                    <div class="status error">
+                        <strong>❌ Endpoints non configurés</strong><br>
+                        La variable SERVER_ENDPOINTS n'est pas définie.
+                    </div>
+                `;
+            }
+        }
+        
+        function setupEventListeners() {
+            // Bouton de mise à jour de la configuration
+            document.getElementById('btn-update-config').addEventListener('click', function() {
+                const newUrl = document.getElementById('server-url').value.trim();
+                if (newUrl && typeof window.setServerBaseUrl === 'function') {
+                    window.setServerBaseUrl(newUrl);
+                    updateCurrentConfig();
+                    updateEndpointsList();
+                    showTestResult('Configuration mise à jour avec succès!', 'success');
+                } else if (!newUrl) {
+                    showTestResult('Veuillez entrer une URL valide', 'error');
+                } else {
+                    showTestResult('Fonction setServerBaseUrl() non disponible', 'error');
+                }
+            });
+            
+            // Bouton de réinitialisation
+            document.getElementById('btn-reset-config').addEventListener('click', function() {
+                if (typeof window.setServerBaseUrl === 'function') {
+                    window.setServerBaseUrl('http://localhost:5000');
+                    updateCurrentConfig();
+                    updateEndpointsList();
+                    showTestResult('Configuration réinitialisée', 'success');
+                }
+            });
+            
+            // Tests de connexion
+            document.getElementById('btn-test-base').addEventListener('click', () => testEndpoint('base'));
+            document.getElementById('btn-test-api').addEventListener('click', () => testEndpoint('api'));
+            document.getElementById('btn-test-portfolio').addEventListener('click', () => testEndpoint('portfolio'));
+            
+            // Test de récupération des données
+            document.getElementById('btn-test-fetch-data').addEventListener('click', testDataFetch);
+            
+            // Environnements prédéfinis
+            document.getElementById('btn-env-local-5000').addEventListener('click', () => setEnvironment('http://localhost:5000'));
+            document.getElementById('btn-env-local-3000').addEventListener('click', () => setEnvironment('http://localhost:3000'));
+            document.getElementById('btn-env-production').addEventListener('click', () => setEnvironment('https://api.votre-domaine.com'));
+        }
+        
+        async function testEndpoint(endpointKey) {
+            if (typeof window.buildServerUrl !== 'function') {
+                showTestResult('Fonction buildServerUrl() non disponible', 'error');
+                return;
+            }
+            
+            const url = window.buildServerUrl(endpointKey);
+            console.log(`🔍 Test de l'endpoint ${endpointKey}: ${url}`);
+            
+            try {
+                const response = await fetch(url, { 
+                    method: 'HEAD',
+                    mode: 'no-cors' // Éviter les erreurs CORS pour le test simple
+                });
+                showTestResult(`✅ Endpoint ${endpointKey} accessible: ${url}`, 'success');
+            } catch (error) {
+                showTestResult(`❌ Endpoint ${endpointKey} non accessible: ${url} (${error.message})`, 'error');
+            }
+        }
+        
+        async function testDataFetch() {
+            if (typeof window.fetchAndMergeGlobalData !== 'function') {
+                showTestResult('Fonction fetchAndMergeGlobalData() non disponible', 'error');
+                return;
+            }
+            
+            showTestResult('🔄 Test de récupération des données en cours...', 'info');
+            
+            try {
+                // Utiliser la fonction sans paramètres pour qu'elle utilise la configuration globale
+                const result = await window.fetchAndMergeGlobalData();
+                if (result) {
+                    showTestResult('✅ Récupération des données réussie', 'success');
+                } else {
+                    showTestResult('⚠️ Récupération des données terminée avec des avertissements', 'info');
+                }
+            } catch (error) {
+                showTestResult(`❌ Erreur lors de la récupération des données: ${error.message}`, 'error');
+            }
+        }
+        
+        function setEnvironment(url) {
+            if (typeof window.setServerBaseUrl === 'function') {
+                window.setServerBaseUrl(url);
+                updateCurrentConfig();
+                updateEndpointsList();
+                showTestResult(`Environnement configuré: ${url}`, 'success');
+            }
+        }
+        
+        function showTestResult(message, type) {
+            const resultsEl = document.getElementById('test-results');
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = message;
+            resultsEl.appendChild(div);
+            
+            // Supprimer après 5 secondes
+            setTimeout(() => {
+                if (div.parentNode) {
+                    div.parentNode.removeChild(div);
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

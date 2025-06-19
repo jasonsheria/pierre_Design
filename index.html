@@ -47,6 +47,74 @@
 	<!-- Diagnostic script import (pour debug) -->
 	<script src="js/diagnostic.js"></script>
 	<script>
+		// ===== CONFIGURATION GLOBALE DU SERVEUR =====
+		// Variable globale pour l'URL du serveur
+		window.SERVER_BASE_URL = 'http://localhost:5000';
+		
+		// Configuration des endpoints
+		window.SERVER_ENDPOINTS = {
+			base: window.SERVER_BASE_URL,
+			api: window.SERVER_BASE_URL + '/api',
+			uploads: window.SERVER_BASE_URL + '/uploads',
+			portfolio: window.SERVER_BASE_URL + '/uploads/portfolio',
+			siteDetails: window.SERVER_BASE_URL + '/site/details'
+		};
+		
+		// Fonction utilitaire pour construire des URLs
+		window.buildServerUrl = function(endpoint, path = '') {
+			if (window.SERVER_ENDPOINTS[endpoint]) {
+				return path ? `${window.SERVER_ENDPOINTS[endpoint]}` : window.SERVER_ENDPOINTS;
+			}
+			return `${window.SERVER_BASE_URL}${path ? '/' + path : ''}`;
+		};
+
+
+
+		
+		console.log('🌍 Configuration serveur initialisée:', {
+			baseUrl: window.SERVER_BASE_URL,
+			endpoints: window.SERVER_ENDPOINTS
+		});
+		
+		// Fonction pour normaliser les chemins d'images et gérer les fallbacks
+		
+		function normalizeImagePath(imagePath, projectTitle = '') {
+			if (!imagePath) {
+				console.warn('Aucun chemin d\'image fourni, utilisation de l\'image par défaut');
+				return 'images/work-1.jpg'; // Image par défaut
+			}
+			
+			// Normaliser le chemin pour éviter les problèmes de casse et de format
+			const normalizedPath = imagePath.replace(/\\/g, '/').trim();
+			
+			// Vérifier si le chemin est relatif ou absolu
+			if (normalizedPath.startsWith('http://') || normalizedPath.startsWith('https://')) {
+				return normalizedPath; // Chemin absolu, pas besoin de modification
+			} else {
+				// Chemin relatif, ajouter le préfixe du serveur
+				return buildServerUrl('portfolio', normalizedPath);
+			}
+		}
+		// Fonction pour créer une image avec fallback
+		function createImageWithFallback(imagePath, alt, className = '', projectTitle = '') {
+			const normalizedPath = normalizeImagePath(imagePath, projectTitle);
+			const img = document.createElement('img');
+			img.src = imagePath ? imagePath : 'images/work-1.jpg'; // Image par défaut si le chemin est vide
+			img.alt = alt;
+			if (className) img.className = className;
+			
+			// Gérer l'erreur de chargement avec un fallback
+			img.onerror = function() {
+				console.warn(`Impossible de charger l'image: ${this.src}, utilisation de l'image par défaut`);
+				if (this.src !== 'images/work-1.jpg') {
+					this.src = 'images/work-1.jpg';
+					this.style='heigh:260px';
+				}
+			};
+			
+			return img;
+		}
+		
 		// Récupération et affichage des données globales à l'initialisation
 		document.addEventListener('DOMContentLoaded', function() {
 			console.log('=== INITIALISATION PAGE INDEX ===');
@@ -56,21 +124,39 @@
 				const globalData = window.getGlobalData();
 				console.log('2. Données globales récupérées:', globalData);
 				console.log('3. Portfolio:', globalData?.portfolio);
-				console.log('4. Nombre de projets portfolio:', globalData?.portfolio?.length || 0);
-				console.log('5. Author:', globalData?.author);
+				console.log('4. Nombre de projets portfolio:', globalData?.portfolio?.projects?.length || 0);
+				console.log('5. Author:', globalData?.user);
 				console.log('6. Site:', globalData?.site);
 				
 				// Test d'affichage du portfolio dans la section Featured Projects
 				console.log('7. Test d\'affichage du portfolio...');
 				const featuredRow = document.getElementById('portfolio-featured-projects');
-				const sliders =document.querySelectorAll('.home-slider .slider-item');
-				// ajouter les image de slider venue de globalData
-				if (sliders.length > 0 && globalData?.portfolio?.length) {
+				const sliders = document.querySelectorAll('.home-slider .slider-item');
+				
+				// Récupérer le portfolio selon la nouvelle structure
+				let portfolioProjects = [];
+				if (typeof getPortfolio === 'function') {
+					// Utiliser la fonction getPortfolio() pour obtenir les projets de la langue courante
+					portfolioProjects = globalData.portfolio?.projects || getPortfolio();
+					console.log('7.0 Portfolio récupéré via getPortfolio():', portfolioProjects);
+				} else if (globalData?.portfolio?.projects) {
+					// Fallback: utiliser globalData.portfolio.projects (nouvelle structure)
+					portfolioProjects = globalData.portfolio.projects || [];
+					console.log('7.0 Portfolio récupéré via globalData.portfolio.projects:', portfolioProjects.length, 'projets');
+				} else if (globalData?.portfolio?.[globalData?.languages?.current]) {
+					// Fallback: structure localisée traditionnelle
+					portfolioProjects = globalData.portfolio[globalData.languages.current] || [];
+					console.log('7.0 Portfolio récupéré via structure localisée:', portfolioProjects.length, 'projets');
+				}
+				console
+				// Ajouter les images de slider venues du portfolio
+				if (sliders.length > 0 && portfolioProjects.length > 0) {
 					console.log('7.1 Injection des images de slider...');
 					sliders.forEach((slider, idx) => {
-						if (globalData.portfolio[idx]) {
-							slider.style.backgroundImage = `url(${globalData.portfolio[idx].image})`;
-							console.log(`7.2 Image de slider #${idx+1} injectée:`, globalData.portfolio[idx].image);
+						if (portfolioProjects[idx]) {
+							const normalizedImage = normalizeImagePath(portfolioProjects[idx].image, portfolioProjects[idx].title);
+							slider.style.backgroundImage = `url(${window.SERVER_BASE_URL +  portfolioProjects[idx].image})`;
+							console.log(`7.2 Image de slider #${idx+1} injectée:`, normalizedImage, '(original:', portfolioProjects[idx].image, ')');
 						} else {
 							console.warn(`7.3 Pas d'image pour le slider #${idx+1}`);
 						}
@@ -78,29 +164,41 @@
 				} else {
 					console.warn('7.4 Aucun slider trouvé ou pas d\'images à injecter');
 				}
-				if (featuredRow && globalData?.portfolio?.length) {
+				
+				// Affichage des projets en vedette
+				if (featuredRow && portfolioProjects.length > 0) {
 					console.log('8. Conteneur trouvé, injection des projets...');
 					featuredRow.innerHTML = '';
 					// Limiter l'affichage à 8 projets maximum
-					const portfolioLimited = globalData.portfolio.slice(0, 8);
-					console.log(`9. Affichage limité à ${portfolioLimited.length} projets sur ${globalData.portfolio.length} disponibles`);
+					const portfolioLimited = portfolioProjects.slice(0, 8);
+					console.log(`9. Affichage limité à ${portfolioLimited.length} projets sur ${portfolioProjects.length} disponibles`);
 					
 					portfolioLimited.forEach((proj, idx) => {
 						console.log(`10. Ajout du projet #${idx+1}:`, proj.title);
 						const col = document.createElement('div');
 						col.className = 'col-md-6 col-lg-3 ftco-animate';
+						
+						// Utiliser la fonction de normalisation d'images
+						const normalizedImage = `${window.SERVER_BASE_URL}${proj.image}`;
+						const projectImg = createImageWithFallback(normalizedImage, proj.title, 'img-fluid', proj.title);
+						
 						col.innerHTML = `
 							<div class="project">
-								<img src="${proj.image}" class="img-fluid" alt="${proj.title}">
+								<div class="img-container"></div>
 								<div class="text">
-									<span>${proj.type}</span>
+									<span>${proj.category || proj.type || 'Projet'}</span>
 									<h3><a href="project.html">${proj.title}</a></h3>
 								</div>
-								<a href="${proj.image}" class="icon image-popup d-flex justify-content-center align-items-center">
+								<a href="${normalizedImage}" class="icon image-popup d-flex justify-content-center align-items-center">
 									<span class="icon-expand"></span>
 								</a>
 							</div>
 						`;
+						
+						// Insérer l'image avec gestion d'erreur
+						const imgContainer = col.querySelector('.img-container');
+						imgContainer.appendChild(projectImg);
+						
 						featuredRow.appendChild(col);
 						
 						// Déclencher l'animation après un court délai
@@ -728,7 +826,15 @@
 	  });
 	  // Charger les données globales existantes
 	  let globalData = window.getGlobalData ? window.getGlobalData() : {};
-	  globalData.portfolio = portfolio;
+	  // Adapter la nouvelle structure globalData.portfolio avec projects
+	  if (!globalData.portfolio) {
+	    globalData.portfolio = {};
+	  }
+	  if (!globalData.portfolio.projects) {
+	    globalData.portfolio.projects = [];
+	  }
+	  // Fusionner les projets existants avec les nouveaux
+	  globalData.portfolio.projects = [...globalData.portfolio.projects, ...portfolio];
 	  localStorage.setItem('globalData', JSON.stringify(globalData));
 
 	  // Affichage dynamique des projets depuis globalData
@@ -736,15 +842,16 @@
 	  if (featuredRow) {
 	    // Supprimer les anciens projets
 	    featuredRow.querySelectorAll('.col-md-6.col-lg-3').forEach(e => e.remove());
-	    // Ajouter les projets du portfolio
-	    globalData.portfolio.forEach(proj => {
+	    // Ajouter les projets du portfolio (utiliser la nouvelle structure)
+	    const portfolioProjects = globalData.portfolio.projects || [];
+	    portfolioProjects.forEach(proj => {
 	      const col = document.createElement('div');
 	      col.className = 'col-md-6 col-lg-3 ftco-animate';
 	      col.innerHTML = `
 	        <div class="project">
 	          <img src="${proj.image}" class="img-fluid" alt="${proj.title}">
 	          <div class="text">
-	            <span>${proj.type}</span>
+	            <span>${proj.type || proj.category || 'Projet'}</span>
 	            <h3><a href="project.html">${proj.title}</a></h3>
 	          </div>
 	          <a href="${proj.image}" class="icon image-popup d-flex justify-content-center align-items-center">
